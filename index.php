@@ -91,6 +91,8 @@ include 'topnavbar.php';
             ?>
         </a>
     </div>
+    </body>
+</html>
 <?php
 mysqli_close($conn);
 include 'footer.php';
