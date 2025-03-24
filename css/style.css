@@ -105,7 +105,7 @@ iframe {
 .btn {
     white-space: nowrap;
     width: auto; /* ปรับความกว้างของปุ่มให้พอดีกับข้อความ */
-    text-align: right; /* จัดปุ่มไปทางขวา */
+    text-align: right; /* จัดปุ่มไปทางขวา */   
 }
 .navbar {
     display: flex;
