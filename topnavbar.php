@@ -117,14 +117,14 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="index.php">สินค้า</a>
+                        <a class="nav-link text-dark" href="product.php">สินค้า</a>
                     </li>
                     <?php if (isset($_SESSION['customer_id'])): ?>
                         <li class="nav-item"><a class="nav-link text-dark" href="order_history.php">ประวัติการสั่งซื้อ</a></li>
                         <li class="nav-item"><a class="nav-link text-dark" href="profile.php">ตั้งค่าบัญชี</a></li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="index.php">ข่าวสารชุมชน</a>
+                        <a class="nav-link text-dark" href="#">ข่าวสารชุมชน</a>
                     </li>
                     <li class="nav-item"><a class="nav-link text-dark"> </a></li>
                 </ul>
