@@ -8,11 +8,12 @@ header {
 }
 
 .card {
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.3s ease;
 }
 
 .card:hover {
     transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเมื่อ hover */
 }
 
 .cart-icon {
@@ -25,6 +26,7 @@ header {
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
 }
 
 .cart-icon:hover {
@@ -38,6 +40,7 @@ header {
 .btn-primary {
     background-color: #e87277;
     border: none;
+    transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
@@ -54,22 +57,19 @@ header {
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
+    transition: transform 0.2s ease;
 }
+
+.toggle-password:hover {
+    transform: translateY(-50%) scale(1.1); /* เพิ่มขนาดเล็กน้อยเมื่อ hover */
+}
+
 .position-relative {
     position: relative;
 }
 
 .table th, .table td {
     vertical-align: middle; /* จัดตำแหน่งแนวตั้งของข้อความในตาราง */
-}
-
-.btn-primary {
-    background-color: #e87277; /* สีพื้นหลังของปุ่ม */
-    border: none; /* ไม่มีขอบ */
-}
-
-.btn-primary:hover {
-    background-color: #d05b63; /* เปลี่ยนสีเมื่อเมาส์ชี้ไปที่ปุ่ม */
 }
 
 .order-details h2 {
@@ -82,8 +82,9 @@ header {
 }
 
 .modal-body img {
-    max-width: 100%; /* ทำให้ภาพแสดงในโมดัลไม่เกินขนาด */
-    height: auto; /* ให้สูงอัตโนมัติ */
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* เพิ่มมุมโค้งให้กับภาพ */
 }
 
 .contact-info h3, .map h3 {
@@ -101,3 +102,19 @@ header {
 iframe {
     border-radius: 8px; /* เพิ่มมุมโค้งให้กับ iframe */
 }
+.btn {
+    white-space: nowrap;
+    width: auto; /* ปรับความกว้างของปุ่มให้พอดีกับข้อความ */
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
