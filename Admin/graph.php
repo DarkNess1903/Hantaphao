@@ -1,6 +1,6 @@
 <?php
-include 'topnavbar.php';
 include 'connectDB.php';
+include 'topnavbar.php';
 
 // ตรวจสอบการเชื่อมต่อ
 if (!$conn) {

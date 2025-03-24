@@ -42,10 +42,16 @@ if (isset($_POST['add_product'])) {
 if (isset($_POST['edit_product'])) {
     $product_id = $_POST['product_id'];
     $name = $_POST['product_name'];
-    $price = $_POST['price'];
-    $cost = $_POST['cost'];
+    
+    // แปลงค่าจากฟอร์มให้เป็น float
+    $price = isset($_POST['price']) ? floatval($_POST['price']) : 0.0;  // แปลงราคาเป็น float
+    $cost = isset($_POST['cost']) ? floatval($_POST['cost']) : 0.0;      // แปลงต้นทุนเป็น float
     $stock = $_POST['stock'];
     $product_description = $_POST['product_description'];
+
+    // ตรวจสอบว่า price และ cost ไม่ใช่ null และตั้งค่าเป็นค่าเริ่มต้นถ้าไม่มี
+    $price = !empty($price) ? $price : 0.0;
+    $cost = !empty($cost) ? $cost : 0.0;
 
     // อัพโหลดรูปภาพใหม่ถ้ามี
     if (!empty($_FILES['image']['name'])) {
@@ -153,7 +159,7 @@ $conn->close();
                         <input type="text" id="product_name" name="product_name" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="price">ราคาขาย (กก.):</label>
+                        <label for="price">ราคาขาย ():</label>
                         <input type="number" id="price" name="price" class="form-control" step="0.01" required>
                     </div>
                     <div class="form-group">
@@ -161,7 +167,7 @@ $conn->close();
                         <input type="number" id="cost" name="cost" class="form-control" step="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label for="stock">สต็อก (กก.):</label>
+                        <label for="stock">สต็อก:</label>
                         <input type="number" id="stock" name="stock" class="form-control" required>
                     </div>
                     <div class="form-group">
@@ -201,7 +207,7 @@ $conn->close();
                         <input type="number" id="edit_cost" name="cost" class="form-control" step="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_stock">สต็อก (กก.):</label>
+                        <label for="edit_stock">สต็อก:</label>
                         <input type="number" id="edit_stock" name="stock" class="form-control" required>
                     </div>
                     <div class="form-group">
@@ -278,10 +284,10 @@ $conn->close();
             ?>
                 <tr>
                     <td><?php echo htmlspecialchars($row['name']); ?></td>
-                    <td><?php echo number_format($row['price'], 2); ?> บาท</td>
-                    <td><?php echo number_format($row['cost'], 2); ?> บาท</td>
-                    <td><?php echo $row['stock_quantity']; ?> กก.</td>
-                    <td><?php echo number_format($profit_per_piece, 2); ?> บาท</td>
+                    <td><?php echo number_format($row['price'], 2); ?> ฿</td>
+                    <td><?php echo number_format($row['cost'], 2); ?> ฿</td>
+                    <td><?php echo $row['stock_quantity']; ?> </td>
+                    <td><?php echo number_format($profit_per_piece, 2); ?> ฿</td>
                     <td>
                         <img src="product/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" style="width: 100px; height: auto;">
                     </td>
