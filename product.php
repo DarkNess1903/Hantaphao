@@ -7,7 +7,7 @@ include 'topnavbar.php';
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <title>หน้าสินค้า - เว็บไซต์ขายเนื้อ</title>
+    <title>สินค้า</title>
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

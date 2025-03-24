@@ -7,7 +7,7 @@ include 'topnavbar.php';
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <title>ติดต่อเรา</title>
+    <title>ข้อมูลชุมชน</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -23,13 +23,13 @@ include 'topnavbar.php';
 </head>
 <body>
     <header class="bg-dark text-white text-center py-3">
-        <h1>ติดต่อเรา</h1>
+        <h1>ข้อมูลชุมชน</h1>
     </header>
 
     <main class="container mt-4">
         <!-- Contact Information -->
         <section class="contact-info">
-            <h3>ข้อมูลการติดต่อ</h3>
+            <h3>ข้อมูลชุมชน</h3>
             <p><strong>ที่อยู่:</strong> 50/1 ถนนราเมศวร ตำบลหอรัตนไชย อำเภอพระนครศรีอยุธยา จังหวัดพระนครศรีอยุธยา 13000</p>
             <p><strong>เบอร์:</strong> 062 386 8314</p>
             <p><strong>อีเมล:</strong> <a href="mailto:prapaapornpj@icloud.com">prapaapornpj@icloud.com</a></p>
