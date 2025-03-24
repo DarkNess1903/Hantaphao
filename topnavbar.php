@@ -107,7 +107,7 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
                     <?php endif; ?>
 
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="contact_us.php">ข้อมูลชุมชน</a>
+                        <a class="nav-link text-dark" href="community_info.php">ข้อมูลชุมชน</a>
                     </li>
 
                     <!-- เมนูเกี่ยวกับโครงการ (ทำให้แสดงเมื่อ cursor hover) -->
@@ -127,6 +127,8 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="index.php">ข่าวสารชุมชน</a>
                     </li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="contact_us.php">ติดต่อเรา</a></li>
+                </ul>
                 <?php
                 if (isset($_SESSION['customer_id'])) {
                     $customer_id = $_SESSION['customer_id'];
