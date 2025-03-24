@@ -101,11 +101,6 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
             <div class="collapse navbar-collapse" id="customNavbar">
                 <ul class="navbar-nav me-auto">
 
-                    <?php if (isset($_SESSION['customer_id'])): ?>
-                        <li class="nav-item"><a class="nav-link text-dark" href="order_history.php">ประวัติการสั่งซื้อ</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="profile.php">ตั้งค่าบัญชี</a></li>
-                    <?php endif; ?>
-
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="contact_us.php">ข้อมูลชุมชน</a>
                     </li>
@@ -124,6 +119,10 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="index.php">สินค้า</a>
                     </li>
+                    <?php if (isset($_SESSION['customer_id'])): ?>
+                        <li class="nav-item"><a class="nav-link text-dark" href="order_history.php">ประวัติการสั่งซื้อ</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" href="profile.php">ตั้งค่าบัญชี</a></li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="index.php">ข่าวสารชุมชน</a>
                     </li>
