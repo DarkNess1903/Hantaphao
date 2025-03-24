@@ -52,8 +52,9 @@ include 'topnavbar.php';
             echo '<p class="card-text">ราคา: ' . number_format($row['price'], 2) . '฿</p>';
             echo '<p class="card-text">สต็อก: ' . number_format($stock_kg, 2) . ' </p>';  // Show stock in kilograms
 
+            $product_id = $row['product_id'];
             // ฟอร์มสำหรับการเพิ่มสินค้าไปตะกร้า (ไม่ต้องกรอกจำนวน)
-            echo '<form action="add_to_cart.php" method="GET" id="addToCartForm' . $product_id . '">';
+            echo '<form action="add_to_cart.php" method="POST" id="addToCartForm' . $product_id . '">';
             echo '<input type="hidden" name="product_id" value="' . $product_id . '">';
             echo '<input type="hidden" name="price" value="' . $row['price'] . '">'; // ส่งราคาสินค้า
             echo '<input type="hidden" name="unit" value="1piece">'; // ส่งหน่วยเป็นชิ้น

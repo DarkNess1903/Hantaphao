@@ -54,7 +54,7 @@ include 'topnavbar.php';
             <div class="col-md-6">
                 <h2><?php echo htmlspecialchars($product_name); ?></h2>
                 <p class="h4">ราคา: ฿<?php echo number_format($product_price, 2); ?></p>
-                <p>สต็อก: <?php echo number_format($product_stock, 2); ?> ชิ้น</p>
+                <p>สต็อก: <?php echo number_format($product_stock, 2); ?>  ชิ้น</p>
 
                 <!-- แสดงรายละเอียดสินค้า -->
                 <div class="mb-3">
@@ -62,8 +62,8 @@ include 'topnavbar.php';
                     <p><?php echo nl2br(htmlspecialchars($product_description)); ?></p> <!-- แสดงรายละเอียดสินค้า -->
                 </div>
 
-                <form action="add_to_cart.php" method="GET">
-                    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+                <form action="add_to_cart.php" method="POST">
+                    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">  <!-- ส่ง product_id -->
                     <input type="hidden" name="price" value="<?php echo $product_price; ?>"> <!-- ส่งราคาสินค้า -->
                     <input type="hidden" name="unit" value="1piece"> <!-- ส่งหน่วยเป็นชิ้น -->
 
@@ -87,6 +87,9 @@ include 'topnavbar.php';
                         </div>
                     </div>
 
+                    <!-- ส่งค่าจำนวนไปยัง add_to_cart.php -->
+                    <input type="hidden" name="quantity" id="quantity" value="1">
+
                     <script>
                         var quantity = 1;  // จำนวนเริ่มต้น
 
@@ -98,9 +101,11 @@ include 'topnavbar.php';
                             if (newQuantity >= 1 && newQuantity <= <?php echo $product_stock; ?>) {
                                 quantity = newQuantity;
                                 document.getElementById('quantityDisplay').innerText = quantity;
+                                document.getElementById('quantity').value = quantity; // ส่งค่าไปใน hidden field
                             }
                         }
                     </script>
+
                     <button type="submit" class="btn btn-primary">เพิ่มในตะกร้า</button>
                 </form>
             </div>
