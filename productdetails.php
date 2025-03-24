@@ -44,7 +44,7 @@ include 'connectDB.php';
     <?php
     include 'topnavbar.php';
     ?>
-        <header class="bg-dark text-white text-center py-3">
+        <header class="bg-dark text-white text-center py-3">    
         <h1>รายละเอียดสินค้า</h1>
     </header>
 
