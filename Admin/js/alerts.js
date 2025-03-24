@@ -43,3 +43,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Optionally, set up a polling interval to check for new orders periodically
     setInterval(fetchNewOrders, 60000); // Check every 60 seconds
 });
+
