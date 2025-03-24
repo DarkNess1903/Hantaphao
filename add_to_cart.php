@@ -39,26 +39,23 @@ if ($product_id > 0 && $quantity > 0) {
 
     $cart_id = $_SESSION['cart_id'];
 
-    // ดึงข้อมูลน้ำหนักต่อชิ้นจากฐานข้อมูล
-    $product_query = "SELECT weight_per_item FROM product WHERE product_id = ?";
+    // ดึงข้อมูลราคาสินค้า
+    $product_query = "SELECT price FROM product WHERE product_id = ?";
     $stmt = mysqli_prepare($conn, $product_query);
     mysqli_stmt_bind_param($stmt, 'i', $product_id);
     mysqli_stmt_execute($stmt);
     $product_result = mysqli_stmt_get_result($stmt);
     $product_data = mysqli_fetch_assoc($product_result);
 
-    // กำหนดน้ำหนักรวมตามที่ผู้ใช้เลือก
     if ($product_data) {
-        $weight_per_piece = $product_data['weight_per_item']; // น้ำหนักของ 1 ชิ้น (กรัม)
-
-        // คำนวณน้ำหนักรวมตามจำนวนที่กรอก
+        // คำนวณราคาและน้ำหนักตามที่ผู้ใช้เลือก
         if ($unit === '1kg') {
             $weight_in_grams = $quantity * 1000; // แปลงจากจำนวนกิโลกรัมเป็นกรัม
-            $quantity = $weight_in_grams / $weight_per_piece; // คำนวณจำนวนชิ้นจากน้ำหนักรวม
         } elseif ($unit === '1piece') {
-            $weight_in_grams = $quantity * $weight_per_piece; // น้ำหนักรวมเป็นน้ำหนักของจำนวนชิ้นที่กรอก
+            $weight_in_grams = $quantity * 1; // สมมติว่า 1 ชิ้นเท่ากับ 1 กรัม (หรือปรับตามจริง)
         }
     }
+
     // ตรวจสอบว่ามีสินค้าในตะกร้าแล้วหรือไม่
     $query = "SELECT * FROM cart_items WHERE cart_id = ? AND product_id = ?";
     $stmt = mysqli_prepare($conn, $query);

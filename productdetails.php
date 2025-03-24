@@ -37,6 +37,9 @@ include 'topnavbar.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายละเอียดสินค้า</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    
+
 </head>
 <body>
 
@@ -66,9 +69,38 @@ include 'topnavbar.php';
 
                     <div class="mb-3">
                         <label for="quantity" class="form-label">จำนวน:</label>
-                        <input type="number" name="quantity" value="1" min="1" max="<?php echo $product_stock; ?>" class="form-control" required>
+                        <div class="input-group">
+                            <!-- ปุ่มลดจำนวน -->
+                            <button class="btn btn-outline-secondary" type="button" id="decreaseBtn" onclick="updateQuantity(-1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            
+                            <!-- ช่องแสดงจำนวน -->
+                            <span id="quantityDisplay" class="form-control" style="text-align: center; width: 50px; padding: 0.375rem; font-size: 1rem; display: inline-block;">
+                                1
+                            </span>
+                            
+                            <!-- ปุ่มเพิ่มจำนวน -->
+                            <button class="btn btn-outline-secondary" type="button" id="increaseBtn" onclick="updateQuantity(1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
 
+                    <script>
+                        var quantity = 1;  // จำนวนเริ่มต้น
+
+                        // ฟังก์ชันเพื่ออัปเดตจำนวน
+                        function updateQuantity(change) {
+                            var newQuantity = quantity + change;
+
+                            // ตรวจสอบไม่ให้เกินค่าสูงสุด (max) หรือค่าน้อยสุด (min)
+                            if (newQuantity >= 1 && newQuantity <= <?php echo $product_stock; ?>) {
+                                quantity = newQuantity;
+                                document.getElementById('quantityDisplay').innerText = quantity;
+                            }
+                        }
+                    </script>
                     <button type="submit" class="btn btn-primary">เพิ่มในตะกร้า</button>
                 </form>
             </div>

@@ -12,9 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'];
 
     // ดึงข้อมูลจากตะกร้าเพื่ออัพเดต
-    $query = "SELECT ci.quantity, p.weight_per_item
+    $query = "SELECT ci.quantity
               FROM cart_items ci
-              JOIN product p ON ci.product_id = p.product_id
               WHERE ci.cart_item_id = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, 'i', $cart_item_id);
@@ -24,21 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result) {
         $item = mysqli_fetch_assoc($result);
         $quantity = $item['quantity'];
-        $weight_per_item = $item['weight_per_item'];
-        $weight_in_grams = $quantity * $weight_per_item;
 
         if ($action === 'increase') {
-            if ($weight_in_grams >= 1000) {
-                $quantity += 1000 / $weight_per_item; // เพิ่ม 1000 กรัม
-            } else {
-                $quantity += 1; // เพิ่ม 1 ชิ้น
-            }
+            $quantity += 1; // เพิ่ม 1 ชิ้น
         } elseif ($action === 'decrease') {
-            if ($weight_in_grams >= 1000) {
-                $quantity -= 1000 / $weight_per_item; // ลด 1000 กรัม
-            } else {
-                $quantity -= 1; // ลด 1 ชิ้น
-            }
+            $quantity -= 1; // ลด 1 ชิ้น
         }
 
         if ($quantity <= 0) {
