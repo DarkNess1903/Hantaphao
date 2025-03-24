@@ -30,91 +30,48 @@ include 'topnavbar.php';
     <main class="container mt-4">
     <section class="row">
     <?php
-        // Query to retrieve product data including weight_per_item
-        $query = "SELECT * FROM product";
-        $result = mysqli_query($conn, $query);
+    // Query to retrieve product data without weight_per_item and price_per_piece
+    $query = "SELECT * FROM product";
+    $result = mysqli_query($conn, $query);
 
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $product_id = $row['product_id'];
-                $stock_grams = $row['stock_quantity']; // Stock in grams
-                $stock_kg = $row['stock_quantity'];
-                $weight_per_piece = $row['weight_per_item']; // Retrieve weight per piece from the database
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $product_id = $row['product_id'];
+            $stock_kg = $row['stock_quantity']; // Stock in kilograms
 
-                echo '<div class="col-lg-3 col-md-4 col-sm-6 mb-4">';
-                echo '<div class="card h-100 text-center">';
-                echo '<img src="./Admin/product/' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '" style="height: 200px; object-fit: cover;">';
-                echo '<div class="card-body">';
-                echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
-                echo '<p class="card-text">ราคา: ' . number_format($row['price'], 2) . '฿ (1 กก.)</p>';
-
-                // เงื่อนไขแสดงราคาต่อชิ้น
-                if ($row['can_be_sold_as_piece'] == 1) {
-                    echo '<p class="card-text">แยกชิ้น : ' . number_format($row['price_per_piece'], 2) . '฿ (1 ชิ้น)</p>';
-                }
-
-                echo '<p class="card-text">สต็อก: ' . number_format($stock_kg, 2) . ' (กก.)</p>';  // Show stock in kilograms
-                echo '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal' . $product_id . '">เพิ่มในตะกร้า</button>';
-                echo '</div>';
-                echo '</div>';
-                echo '</div>';
-
-                // Modal for quantity selection
-                echo '
-                <div class="modal fade" id="productModal' . $product_id . '" tabindex="-1" aria-labelledby="productModalLabel' . $product_id . '" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="productModalLabel' . $product_id . '">เลือกปริมาณ - ' . htmlspecialchars($row['name']) . '</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="add_to_cart.php" method="GET" id="addToCartForm' . $product_id . '">
-                                    <input type="hidden" name="product_id" value="' . $product_id . '">
-                                    <input type="hidden" name="price" id="price_' . $product_id . '" value="' . $row['price'] . '"> <!-- ส่งราคาสินค้า -->
-                                    <div class="mb-3">
-                                        <label for="unit_' . $product_id . '">เลือกปริมาณ:</label>
-                                        <select id="unit_' . $product_id . '" name="unit" class="form-select" onchange="updatePrice(' . $product_id . ', ' . ($row['can_be_sold_as_piece'] == 1 ? $row['price_per_piece'] : 0) . ', ' . $row['price'] . ')">
-                                            <option value="1kg">1 กิโลกรัม</option>';
-                if ($row['can_be_sold_as_piece'] == 1) {
-                    echo '<option value="1piece">1 ชิ้น (' . number_format($weight_per_piece, 0) . ' กรัม)</option>';
-                }
-                echo '        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="quantity">จำนวน:</label>
-                                        <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control" required>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-                                        <button type="submit" class="btn btn-primary">ยืนยันการเพิ่มในตะกร้า</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                ';
-            }
-        } else {
-            echo '<p class="text-center">ไม่พบสินค้า</p>';
-        }
-        ?>
-<script>
-    function updatePrice(productId, pricePerPiece, pricePerKg) {
-        const unitSelect = document.getElementById('unit_' + productId);
-        const priceInput = document.getElementById('price_' + productId);
-        
-        if (unitSelect.value === '1piece') {
-            priceInput.value = pricePerPiece; // เปลี่ยนเป็นราคาชิ้น
-        } else {
-            priceInput.value = pricePerKg; // เปลี่ยนเป็นราคากิโลกรัม
-        }
-    }
-</script>
-    </section>
-</main>
+            echo '<div class="col-lg-3 col-md-4 col-sm-6 mb-4">';
+            echo '<div class="card h-100 text-center">';
             
+            // คลิกที่รูปจะไปที่หน้ารายละเอียดสินค้า
+            echo '<a href="productdetails.php?product_id=' . $product_id . '">
+                    <img src="./Admin/product/' . htmlspecialchars($row['image']) . '" class="card-img-top" alt="' . htmlspecialchars($row['name']) . '" style="height: 200px; width: 100%; object-fit: cover;">
+                  </a>';
+            
+            echo '<div class="card-body">';
+            echo '<h5 class="card-title">' . htmlspecialchars($row['name']) . '</h5>';
+            echo '<p class="card-text">ราคา: ' . number_format($row['price'], 2) . '฿</p>';
+            echo '<p class="card-text">สต็อก: ' . number_format($stock_kg, 2) . ' </p>';  // Show stock in kilograms
+
+            // ฟอร์มสำหรับการเพิ่มสินค้าไปตะกร้า (ไม่ต้องกรอกจำนวน)
+            echo '<form action="add_to_cart.php" method="GET" id="addToCartForm' . $product_id . '">';
+            echo '<input type="hidden" name="product_id" value="' . $product_id . '">';
+            echo '<input type="hidden" name="price" value="' . $row['price'] . '">'; // ส่งราคาสินค้า
+            echo '<input type="hidden" name="unit" value="1piece">'; // ส่งหน่วยเป็นชิ้น
+            echo '<input type="hidden" name="quantity" value="1">'; // จำนวนเป็น 1 ชิ้นตลอด
+            echo '<button type="submit" class="btn btn-primary">เพิ่มในตะกร้า</button>';
+            echo '</form>';
+
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+        }
+    } else {
+        echo '<p class="text-center">ไม่พบสินค้า</p>';
+    }
+?>
+</section>
+</main>
+       
     <div class="cart-icon fixed-bottom mb-4 ms-4">
         <a href="cart.php" class="btn">
             <i class="fas fa-shopping-cart"></i>
