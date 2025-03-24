@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'connectDB.php';
-include 'topnavbar.php';
 
     // รับ product_id จาก URL
     if (isset($_GET['product_id'])) {
@@ -42,6 +41,12 @@ include 'topnavbar.php';
 
 </head>
 <body>
+    <?php
+    include 'topnavbar.php';
+    ?>
+        <header class="bg-dark text-white text-center py-3">
+        <h1>รายละเอียดสินค้า</h1>
+    </header>
 
     <div class="container mt-5">
         <div class="row">

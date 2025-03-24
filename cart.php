@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'connectDB.php';
-include 'topnavbar.php';
 
 // ตรวจสอบการเข้าสู่ระบบ
 if (!isset($_SESSION['customer_id'])) {
@@ -73,6 +72,10 @@ if ($cart) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+    <?php
+    include 'topnavbar.php';
+    ?>
+    
     <header class="bg-dark text-white text-center py-3">
         <h1>ตะกร้าสินค้าของคุณ</h1>
     </header>
