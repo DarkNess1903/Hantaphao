@@ -217,7 +217,6 @@ $conn->close();
         <p>ที่อยู่: <?php echo htmlspecialchars($order['customer_address']); ?></p>
         <p>อำเภอ: <?php echo htmlspecialchars($order['amphurName']); ?></p> <!-- แสดงชื่ออำเภอ -->
         <p>จังหวัด: <?php echo htmlspecialchars($order['provinceName']); ?></p> <!-- แสดงชื่อจังหวัด -->
-        <p>ค่าส่ง: <?php echo number_format($order['shipping_fee'], 2); ?> บาท</p> <!-- แสดงค่าส่ง -->
         <p>ยอดรวมที่ต้องชำระ: <?php echo number_format($order['total_amount'], 2); ?> บาท</p>
         <p>สถานะคำสั่งซื้อ: <?php echo htmlspecialchars($order['status']); ?></p>
 

@@ -18,7 +18,7 @@ if ($order_id <= 0) {
 
 // ดึงข้อมูลคำสั่งซื้อ
 $order_query = "
-    SELECT order_id, order_date, total_amount, payment_slip, status, tracking_number, shipping_fee
+    SELECT order_id, order_date, total_amount, payment_slip, status, tracking_number
     FROM orders
     WHERE order_id = ? AND customer_id = ?";
 $stmt = mysqli_prepare($conn, $order_query);
@@ -34,7 +34,7 @@ $order = mysqli_fetch_assoc($order_result);
 
 // ดึงรายละเอียดสินค้า รวมถึง weight_in_grams
 $details_query = "
-    SELECT p.name, p.image, od.quantity, od.price, od.weight_in_grams
+    SELECT p.name, p.image, od.quantity, od.price
     FROM orderdetails od
     JOIN product p ON od.product_id = p.product_id
     WHERE od.order_id = ?
@@ -71,7 +71,7 @@ $details_result = mysqli_stmt_get_result($stmt);
         <h2>รหัสคำสั่งซื้อ: <?php echo htmlspecialchars($order['order_id']); ?></h2>
         <p><strong>วันที่สั่งซื้อ:</strong> <?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($order['order_date']))); ?></p>
         <p><strong>ยอดรวมทั้งหมด:</strong> ฿<?php echo number_format($order['total_amount'], 2); ?></p>
-        <p><strong>ค่าจัดส่ง:</strong> ฿<?php echo number_format($order['shipping_fee'], 2); ?></p> <!-- แสดงค่าจัดส่ง -->
+        
         <?php
         $payment_slip = isset($order['payment_slip']) ? $order['payment_slip'] : '';
         $image_path = "./Admin/uploads/" . htmlspecialchars(basename($payment_slip));
