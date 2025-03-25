@@ -56,7 +56,7 @@ if (!$cart) {
 $cart_id = $cart['cart_id'];
 
 // ดึงข้อมูลสินค้าในตะกร้า
-$items_query = "SELECT ci.cart_item_id, p.product_id, p.name, p.image, ci.quantity, ci.price, (ci.quantity * ci.price) AS total, p.stock_quantity
+$items_query = "SELECT ci.cart_item_id, p.product_id, p.name, p.image, ci.quantity, ci.price, p.weight, p.shipping_cost, (ci.quantity * ci.price) AS total, p.stock_quantity
                 FROM cart_items ci
                 JOIN product p ON ci.product_id = p.product_id
                 WHERE ci.cart_id = ?";
@@ -66,10 +66,31 @@ mysqli_stmt_bind_param($stmt, 'i', $cart_id);
 mysqli_stmt_execute($stmt);
 $items_result = mysqli_stmt_get_result($stmt);
 
+$total_weight = 0;
 $grand_total = 0;
+$total_shipping_cost = 0; // กำหนดค่าเริ่มต้น
+$shipping_cost_by_weight = 0; // กำหนดค่าเริ่มต้น
+
 while ($item = mysqli_fetch_assoc($items_result)) {
     $item_total = $item['price'] * $item['quantity'];
     $grand_total += $item_total;
+
+    // คำนวณน้ำหนักรวม
+    $total_weight += $item['weight'] * $item['quantity'];
+
+    // คำนวณค่าบวกเพิ่มสำหรับการจัดส่ง
+    $shipping_cost_per_item = $item['shipping_cost'] * $item['quantity'];
+    $total_shipping_cost += $shipping_cost_per_item;
+}
+
+// คำนวณค่าจัดส่งตามน้ำหนัก
+$shipping_cost = 0;
+if ($total_weight <= 1) {
+    $shipping_cost = 50;  // ค่าจัดส่งสำหรับน้ำหนักไม่เกิน 1 กิโลกรัม
+} elseif ($total_weight <= 5) {
+    $shipping_cost = 100; // ค่าจัดส่งสำหรับน้ำหนัก 1-5 กิโลกรัม
+} else {
+    $shipping_cost = 200; // ค่าจัดส่งสำหรับน้ำหนักเกิน 5 กิโลกรัม
 }
 
 // รีเซ็ต pointer เพื่อนำข้อมูลไปใช้ต่อ
@@ -91,14 +112,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
 
     if (move_uploaded_file($payment_slip['tmp_name'], $upload_file)) {
         // เพิ่มคำสั่งซื้อ
-        $order_query = "INSERT INTO orders (customer_id, total_amount, payment_slip, order_date, status, address) VALUES (?, ?, ?, NOW(), ?, ?)";
+        $order_query = "INSERT INTO orders (customer_id, total_amount, payment_slip, order_date, status, address, shipping_cost) VALUES (?, ?, ?, NOW(), ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $order_query);
         $status = 'รอตรวจสอบ';
-        mysqli_stmt_bind_param($stmt, 'idsss', $customer_id, $grand_total, $file_name, $status, $address);
+        $total_order_amount = $grand_total + $shipping_cost; // เพิ่มค่าจัดส่ง
+        mysqli_stmt_bind_param($stmt, 'idssss', $customer_id, $total_order_amount, $file_name, $status, $address, $shipping_cost);
         mysqli_stmt_execute($stmt);
         $order_id = mysqli_insert_id($conn);
 
-        $total_weight = 0;
         mysqli_data_seek($items_result, 0);
 
         // วนลูปสินค้าในตะกร้าเพื่อบันทึก order details
@@ -106,7 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
             $product_id = $item['product_id'];
             $quantity = $item['quantity'];
             $price = $item['price'];
-            $weight_per_item = $item['stock_quantity'];
 
             // เพิ่มรายการใน orderdetails
             $orderdetails_query = "INSERT INTO orderdetails (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
@@ -121,12 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
             mysqli_stmt_execute($stmt);
         }
 
-        // อัปเดตยอดรวมคำสั่งซื้อ
-        $update_order_query = "UPDATE orders SET total_amount = ? WHERE order_id = ?";
-        $stmt = mysqli_prepare($conn, $update_order_query);
-        mysqli_stmt_bind_param($stmt, 'di', $total_order_amount, $order_id);
-        mysqli_stmt_execute($stmt);
-
         // ลบข้อมูลจาก cart_items
         $delete_cart_items_query = "DELETE FROM cart_items WHERE cart_id = ?";
         $stmt = mysqli_prepare($conn, $delete_cart_items_query);
@@ -138,7 +152,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
         die("การอัปโหลดไฟล์ล้มเหลว");
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -203,6 +216,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
 
                     <div class="order-summary">
                         <h4>ยอดคำสั่งซื้อ: <span class="text-success"><?php echo number_format($grand_total, 2); ?> บาท</span></h4>
+                        <h4>น้ำหนักรวม: <span class="text-success"><?php echo number_format($total_weight, 2); ?> กิโลกรัม</span></h4>
+                        <h4>ค่าจัดส่งจากน้ำหนัก: <span class="text-success"><?php echo number_format($shipping_cost, 2); ?> บาท</span></h4>
+                        <h4>ค่าจัดส่งพิเศษ: <span class="text-success"><?php echo number_format($total_shipping_cost, 2); ?> บาท</span></h4>
+                        <h4>ยอดรวมทั้งหมด: <span class="text-danger"><?php echo number_format($grand_total + $shipping_cost + $total_shipping_cost, 2); ?> บาท</span></h4>
                     </div>
 
                 <!-- ข้อมูลสำหรับจัดส่ง -->

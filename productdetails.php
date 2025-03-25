@@ -18,7 +18,8 @@ include 'connectDB.php';
             $product_price = $row['price'];
             $product_stock = $row['stock_quantity'];
             $product_image = $row['image'];
-            $product_description = $row['product_description']; // ดึงรายละเอียดสินค้า
+            $product_description = $row['product_description'];
+            $product_weight = $row['weight'];
         } else {
             echo '<p class="text-center">ไม่พบสินค้า</p>';
             exit;
@@ -52,13 +53,17 @@ include 'connectDB.php';
         <div class="row">
             <!-- แสดงรูปรายละเอียดสินค้า -->
             <div class="col-md-6">
-                <img src="./Admin/product/<?php echo htmlspecialchars($product_image); ?>" class="img-fluid" alt="<?php echo htmlspecialchars($product_name); ?>">
+                <img src="./Admin/product/<?php echo htmlspecialchars($product_image); ?>" 
+                    class="img-fluid" 
+                    alt="<?php echo htmlspecialchars($product_name); ?>" 
+                    style="width: 400px; height: 300px; object-fit: contain;">
             </div>
 
             <!-- แสดงข้อมูลสินค้า -->
             <div class="col-md-6">
                 <h2><?php echo htmlspecialchars($product_name); ?></h2>
                 <p class="h4">ราคา: ฿<?php echo number_format($product_price, 2); ?></p>
+                <p></p>น้ำหนัก: <?php echo number_format($product_weight, 2); ?></p>
                 <p>สต็อก: <?php echo number_format($product_stock, 2); ?>  ชิ้น</p>
 
                 <!-- แสดงรายละเอียดสินค้า -->
