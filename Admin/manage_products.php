@@ -38,53 +38,67 @@ if (isset($_POST['add_product'])) {
     }    
 }
 
-// การแก้ไขสินค้า
-if (isset($_POST['edit_product'])) {
-    $product_id = $_POST['product_id'];
-    $name = $_POST['product_name'];
-    
-    // แปลงค่าจากฟอร์มให้เป็น float
-    $price = isset($_POST['price']) ? floatval($_POST['price']) : 0.0;  // แปลงราคาเป็น float
-    $cost = isset($_POST['cost']) ? floatval($_POST['cost']) : 0.0;      // แปลงต้นทุนเป็น float
-    $stock = $_POST['stock'];
-    $product_description = $_POST['product_description'];
+// เมื่อคลิกที่ปุ่มแก้ไข, รับ product_id
+if (isset($_GET['edit_product_id'])) {
+    $product_id = $_GET['edit_product_id'];
 
-    // ตรวจสอบว่า price และ cost ไม่ใช่ null และตั้งค่าเป็นค่าเริ่มต้นถ้าไม่มี
-    $price = !empty($price) ? $price : 0.0;
-    $cost = !empty($cost) ? $cost : 0.0;
+    // ดึงข้อมูลสินค้าจากฐานข้อมูล
+    $sql = "SELECT * FROM product WHERE product_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // อัพโหลดรูปภาพใหม่ถ้ามี
-    if (!empty($_FILES['image']['name'])) {
-        $image = $_FILES['image']['name'];
-        move_uploaded_file($_FILES['image']['tmp_name'], "product/" . $image);
-        $sql = "UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=?, image=? WHERE product_id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssdisssi', $name, $price, $cost, $stock, $product_description, $image, $product_id);
-    } else {
-        $sql = "UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=? WHERE product_id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssdissi', $name, $price, $cost, $stock, $product_description, $product_id);
-    }
-
-    if ($stmt->execute()) {
-        echo "<script>alert('แก้ไขสินค้าสำเร็จ');</script>";
-        echo "<script>window.location.href='manage_products.php';</script>";
-    } else {
-        echo "เกิดข้อผิดพลาด: " . $stmt->error;
+    if ($row = $result->fetch_assoc()) {
+        // เก็บข้อมูลในตัวแปร
+        $name = $row['name'];
+        $price = $row['price'];
+        $cost = $row['cost'];
+        $stock = $row['stock_quantity'];
+        $product_description = $row['product_description'];
+        $image = $row['image'];  // ใช้ค่าภาพเดิมจากฐานข้อมูล
     }
 }
 
-// การลบสินค้า
-if (isset($_GET['delete'])) {
-    $product_id = $_GET['delete'];
+// เมื่อส่งฟอร์มมา, ทำการอัพเดตข้อมูล
+if (isset($_POST['edit_product'])) {
+    $product_id = $_POST['product_id'];
+    $name = $_POST['product_name'];
+    $price = isset($_POST['price']) ? floatval($_POST['price']) : 0.0;
+    $cost = isset($_POST['cost']) ? floatval($_POST['cost']) : 0.0;
+    $stock = $_POST['stock'];
+    $product_description = $_POST['product_description'];
 
-    $sql = "DELETE FROM product WHERE product_id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $product_id);
+    // ตรวจสอบว่ามีการอัพโหลดรูปภาพใหม่หรือไม่
+    if (!empty($_FILES['image']['name'])) {
+        // ถ้ามีการอัพโหลดรูปภาพใหม่
+        $image = $_FILES['image']['name'];
+        $target_path = "product/" . $image;
+        move_uploaded_file($_FILES['image']['tmp_name'], $target_path);
+    } else {
+        // ใช้รูปภาพเดิมจากฐานข้อมูล
+        // ตรวจสอบก่อนว่า $image ถูกกำหนดค่าแล้วหรือยัง
+        if (isset($image)) {
+            $image = $row['image'];
+        }
+    }
 
+    // SQL สำหรับอัพเดตข้อมูล
+    if (!empty($image)) {
+        $sql = "UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=?, image=? WHERE product_id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ssdisss', $name, $price, $cost, $stock, $product_description, $image, $product_id);
+    } else {
+        $sql = "UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=? WHERE product_id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ssdiss', $name, $price, $cost, $stock, $product_description, $product_id);
+    }
+
+    // Execute the update
     if ($stmt->execute()) {
-        echo "<script>alert('ลบสินค้าสำเร็จ');</script>";
+        echo "<script>alert('แก้ไขสินค้าสำเร็จ');</script>";
         echo "<script>window.location.href='manage_products.php';</script>";
+        exit();  // หยุดการทำงานของโปรแกรมหลังจาก redirect
     } else {
         echo "เกิดข้อผิดพลาด: " . $stmt->error;
     }
@@ -197,22 +211,27 @@ $conn->close();
             </div>
             <div class="modal-body">
                 <form id="editProductForm" action="manage_products.php" method="post" enctype="multipart/form-data">
-                    <input type="hidden" id="edit_product_id" name="product_id">
+                    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+                    
                     <div class="form-group">
                         <label for="edit_product_name">ชื่อสินค้า:</label>
-                        <input type="text" id="edit_product_name" name="product_name" class="form-control" required>
+                        <input type="text" id="edit_product_name" name="product_name" class="form-control" value="<?php echo htmlspecialchars($name); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_price">ราคา:</label>
+                        <input type="number" id="edit_price" name="price" class="form-control" step="0.01" value="<?php echo htmlspecialchars($price); ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_cost">ต้นทุน:</label>
-                        <input type="number" id="edit_cost" name="cost" class="form-control" step="0.01" required>
+                        <input type="number" id="edit_cost" name="cost" class="form-control" step="0.01" value="<?php echo htmlspecialchars($cost); ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_stock">สต็อก:</label>
-                        <input type="number" id="edit_stock" name="stock" class="form-control" required>
+                        <input type="number" id="edit_stock" name="stock" class="form-control" value="<?php echo htmlspecialchars($stock); ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_product_description">รายละเอียดสินค้า:</label>
-                        <textarea id="edit_product_description" name="product_description" class="form-control"></textarea>
+                        <textarea id="edit_product_description" name="product_description" class="form-control"><?php echo htmlspecialchars($product_description); ?></textarea>
                     </div>
                     <div class="form-group">
                         <label for="edit_image">รูปภาพสินค้า:</label>
@@ -331,7 +350,7 @@ $conn->close();
         const price = $(this).data('price');
         const cost = $(this).data('cost');
         const stock = $(this).data('stock');
-        const description = $(this).data('description'); // เพิ่มการรับข้อมูล description
+        const description = $(this).data('description');
 
         // กำหนดค่าให้กับฟิลด์ในฟอร์มแก้ไข
         $('#edit_product_id').val(productId);
@@ -339,7 +358,7 @@ $conn->close();
         $('#edit_price').val(price);
         $('#edit_cost').val(cost);
         $('#edit_stock').val(stock);
-        $('#edit_product_description').val(description); // เพิ่มการตั้งค่าฟิลด์ description
+        $('#edit_product_description').val(description);
 
         // แสดง Modal แก้ไขสินค้า
         $('#editProductModal').modal('show');

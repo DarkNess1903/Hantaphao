@@ -97,7 +97,7 @@ $no_order = mysqli_num_rows($order_result) === 0;
                 </div>
                 <div class="modal-body text-center">
                     <p>ไม่มีคำสั่งซื้อในระบบ</p>
-                    <a href="index.php" class="btn btn-primary">ไปที่หน้าสินค้า</a>
+                    <a href="product.php" class="btn btn-primary">ไปที่หน้าสินค้า</a>
                 </div>
             </div>
         </div>
