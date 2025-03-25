@@ -2,7 +2,6 @@
 session_start();
 include 'connectDB.php';
 include 'topnavbar.php';
-
 ?>
 
 <!DOCTYPE html>
@@ -81,6 +80,7 @@ header .banner img {
     flex-direction: column;
     box-sizing: border-box;
     margin: 0;
+    min-height: 425px;
 }
 
 .col-md-9 {
@@ -91,6 +91,7 @@ header .banner img {
     flex-direction: column;
     box-sizing: border-box;
     margin: 0;
+    min-height: 425px;
 }
 
 .PR_pic, .right {
@@ -206,20 +207,20 @@ header .banner img {
 
 /* Product Section */
 .product {
-    text-align: left; /* Changed from center to left */
-    width: 100%; /* Full width to stretch edge-to-edge */
+    text-align: left; /* Changed to left */
+    width: 100%; /* Full width */
     margin-bottom: 40px;
-    padding: 0 15px; /* Added padding to match .objective */
+    padding: 0 15px; /* Match objective padding */
 }
 
 .product h1 {
-    font-size: 2rem;
+    font-size: 2.2rem; /* Slightly larger */
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 20px;
     display: flex;
+    justify-content: flex-start; /* Align left */
     align-items: center;
-    justify-content: flex-start; /* Align title to left */
 }
 
 .product h1 a {
@@ -236,7 +237,7 @@ header .banner img {
 .slideshow-container {
     width: 100%; /* Full width to stretch edge-to-edge */
     position: relative;
-    margin: 0; /* Removed auto margin */
+    margin: 0; /* Remove centering */
 }
 
 .mySlides {
@@ -247,9 +248,9 @@ header .banner img {
 .mySlides img {
     border-radius: 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 105%; /* Slightly larger than container */
+    width: 105%; /* Slightly larger */
     max-width: none; /* Remove max-width restriction */
-    margin-left: 0; /* Ensure it aligns left */
+    margin-left: 0; /* Align left */
 }
 
 .prev, .next {
@@ -367,7 +368,11 @@ header .banner img {
     }
 
     .product {
-        padding: 0 12px; /* Match padding with objective */
+        padding: 0 12px; /* Match objective */
+    }
+
+    .product h1 {
+        font-size: 1.8rem; /* Slightly larger */
     }
 
     .slideshow-container {
@@ -439,7 +444,11 @@ header .banner img {
     }
 
     .product {
-        padding: 0 10px; /* Match padding with objective */
+        padding: 0 10px; /* Match objective */
+    }
+
+    .product h1 {
+        font-size: 1.6rem; /* Slightly larger */
     }
 
     .slideshow-container {
@@ -468,20 +477,16 @@ header .banner img {
                 <h1>Hantaphao <img src="images/leaf.png" alt="Leaf Icon" class="img-fluid" width="50px" height="50px"></h1>
                 <h2>History</h2>
                 <p class="history-section" style="margin-top:15px">
-                    ตำบลหันตะเภาเป็นชุมชนเกษตรกรรมอุดมสมบูรณ์ไปด้วยป่าไม้ มีลำคลองไหลผ่าน ในอดีตชาวบ้านใช้คลองในการสัญจรไปมา โดยใช้เรือเป็นพาหนะ ต่อมามีคนจีนอพยพมาอยู่ ประกอบอาชีพค้าขาย เป็นทั้งแหล่งรวบรวมสินค้านานาภัณฑ์ และเป็นจุดกลับลำเรือสำเภา จึงเรียกขานที่นี่ว่า <span class="highlight">“หันสำเภา”</span> และเรียกเพี้ยนมาเป็น <span class="highlight">“หันตะเภา”</span> ต่อมาคนจีนได้อพยพออกจากพื้นที่ไปอยู่ที่อื่นๆ พื้นที่บ้านลำแดงมีป่าลดน้อยลง ทำให้ชาวบ้านยึดอาชีพทำการเกษตรจนถึงปัจจุบัน ตำบลหันตะเภา อำเภอวังน้อย จังหวัดพระนครศรีอยุธยา มีคำขวัญประจำตำบลว่า <span class="motto">“ตำบลน่าอยู่ ชุมชนเข้มแข็ง พัฒนาคุณภาพชีวิต ส่งเสริมเศรษฐกิจ มุ่งสู่ชีวิตพอเพียง และมีการบริหารจัดการที่ดีระดับแนวหน้า”</span>
+                    ตำบลหันตะเภาเป็นชุมชนเกษตรกรรมอุดมสมบูรณ์ไปด้วยป่าไม้ มีลำคลองไหลผ่าน ในอดีตชาวบ้านใช้คลองในการสัญจรไปมา โดยใช้เรือเป็นพาหนะ ต่อมามีคนจีนอพยพมาอยู่ ประกอบอาชีพค้าขาย เป็นทั้งแหล่งรวบรวมสินค้านานาภัณฑ์ และเป็นจุดกลับลำเรือสำเภา จึงเรียกขานที่นี่ว่า <span class="highlight">“หันสำเภา”</span> และเรียกเพี้ยนมาเป็น <span class="highlight">“หันตะเภา”</span> ต่อมาคนจีนได้อพยพออกจากพื้นที่ไปอยู่ที่อื่นๆ พื้นที่บ้านลำแดงมีป่าลดน้อยลง ทำให้ชาวบ้านยึดอาชีพทำการเกษตรจนถึงปัจจุบัน ตำบลหันตะเภา อำเภอวังน้อย จังหวัดพระนครศรีอยุธยา มีคำขวัญประจำตำบลว่า <span class="motto">“ตำบลน่าอยู่ชุมชนเข้มแข็ง พัฒนาคุณภาพชีวิตส่งเสริมเศรษฐกิจ มุ่งสู่ชีวิตพอเพียง <BR>และมีการบริหารจัดการที่ดีระดับแนวหน้า”</span>
                 </p>
             </div>
         </div>
     </div>
 
     <div class="objective container my-4">
-        <h1>วัตถุประสงค์</h1>
+        <h1 style="color:#3abe1f;font-weight: bold">วัตถุประสงค์</h1>
         <p>
-            โครงการนี้มุ่งเน้นการพัฒนาชุมชนหันตะเภาในอำเภอวังน้อย จังหวัดพระนครศรีอยุธยา โดยมีวัตถุประสงค์หลักในการศึกษาพัฒนาระบบควบคุมอัตโนมัติ <br>
-            1. ศึกษาพัฒนาระบบควบคุมอัตโนมัติในโรงเรือนเห็ดและสร้างโรงเรือนเห็ดอัจฉริยะเพื่อเพิ่มผลผลิตอย่างมีประสิทธิภาพ <br>
-            2. ออกแบบและสร้างเตาเผาชีวมวลไร้ควันเพื่อการผลิตถ่านและน้ำส้มควันไม้เชิงพาณิชย์ที่เป็นมิตรกับสิ่งแวดล้อม <br>
-            3. พัฒนาเครื่องสีข้าวอินทรีย์ดัชนีน้ำตาลต่ำเพื่อเพิ่มประสิทธิภาพการผลิตและยกระดับคุณภาพผลิตภัณฑ์ของชุมชน <br>
-            4. ศึกษาการนำเทคโนโลยีแพลตฟอร์มดิจิตอลมาใช้เพื่อเพิ่มมูลค่าผลิตภัณฑ์ของภูมิปัญญาท้องถิ่นและพัฒนาแพลตฟอร์มดิจิตอลสำหรับธุรกิจผลิตภัณฑ์ชุมชนอย่างยั่งยืน
+            โครงการนี้มุ่งเน้นการพัฒนาชุมชนหันตะเภาในอำเภอวังน้อย จังหวัดพระนครศรีอยุธยา โดยมีวัตถุประสงค์หลักในการศึกษาพัฒนาระบบควบคุมอัตโนมัติในโรงเรือนเห็ดและสร้างโรงเรือนเห็ดอัจฉริยะเพื่อเพิ่มผลผลิตอย่างมีประสิทธิภาพ, ออกแบบและสร้างเตาเผาชีวมวลไร้ควันเพื่อการผลิตถ่านและน้ำส้มควันไม้เชิงพาณิชย์ที่เป็นมิตรกับสิ่งแวดล้อม, พัฒนาเครื่องสีข้าวอินทรีย์ดัชนีน้ำตาลต่ำเพื่อเพิ่มประสิทธิภาพการผลิตและยกระดับคุณภาพผลิตภัณฑ์ของชุมชน, รวมทั้งศึกษาการนำเทคโนโลยีแพลตฟอร์มดิจิตอลมาใช้เพื่อเพิ่มมูลค่าผลิตภัณฑ์ของภูมิปัญญาท้องถิ่นและพัฒนาแพลตฟอร์มดิจิตอลสำหรับธุรกิจผลิตภัณฑ์ชุมชนอย่างยั่งยืน
         </p>
     </div>
 
@@ -506,12 +511,15 @@ header .banner img {
             <a class="next" onclick="plusSlides(1)">❯</a>
         </div>
         <br>
-        <div style="text-align:left"> <!-- Changed to left -->
+        <div style="text-align:center">
             <span class="dot" onclick="currentSlide(1)"></span>
             <span class="dot" onclick="currentSlide(2)"></span>
             <span class="dot" onclick="currentSlide(3)"></span>
         </div>
     </div>
+    <?php
+    include 'footer.php';
+    ?>
 
     <script>
         let slideIndex = 1;
