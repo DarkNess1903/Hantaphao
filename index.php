@@ -11,6 +11,11 @@ include 'topnavbar.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hantaphao Project</title>
 
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favi/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favi/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favi/apple-touch-icon.png">
+    <link rel="shortcut icon" href="/images/favi/favicon.ico">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -207,19 +212,19 @@ header .banner img {
 
 /* Product Section */
 .product {
-    text-align: left; /* Changed to left */
-    width: 100%; /* Full width */
+    text-align: left;
+    width: 100%;
     margin-bottom: 40px;
-    padding: 0 15px; /* Match objective padding */
+    padding: 0 15px;
 }
 
 .product h1 {
-    font-size: 2.2rem; /* Slightly larger */
+    font-size: 3rem;
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 20px;
     display: flex;
-    justify-content: flex-start; /* Align left */
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -235,22 +240,30 @@ header .banner img {
 
 /* Slideshow Styling */
 .slideshow-container {
-    width: 100%; /* Full width to stretch edge-to-edge */
+    width: 100%;
     position: relative;
-    margin: 0; /* Remove centering */
+    margin: 0;
+    overflow: hidden;
+    height: 400px; /* กำหนดความสูงให้ container */
 }
 
 .mySlides {
-    display: none;
-    text-align: left; /* Align slides to left */
+    width: 100%;
+    height: 400px;
+    opacity: 0; /* เริ่มต้นโปร่งใส */
+    position: absolute; /* วางสไลด์ทับกัน */
+    top: 0;
+    left: 0;
+    transition: opacity 2s ease-in-out; /* ใช้ transition แทน animation */
 }
 
 .mySlides img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 105%; /* Slightly larger */
-    max-width: none; /* Remove max-width restriction */
-    margin-left: 0; /* Align left */
+    display: block;
 }
 
 .prev, .next {
@@ -293,14 +306,7 @@ header .banner img {
     background-color: #27ae60;
 }
 
-.fade {
-    animation: fade 1.5s ease-in-out;
-}
-
-@keyframes fade {
-    from {opacity: 0.4} 
-    to {opacity: 1}
-}
+/* ลบ .fade ออก เพราะใช้ transition แทน */
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -368,20 +374,21 @@ header .banner img {
     }
 
     .product {
-        padding: 0 12px; /* Match objective */
+        padding: 0 12px;
     }
 
     .product h1 {
-        font-size: 1.8rem; /* Slightly larger */
+        font-size: 1.8rem;
     }
 
     .slideshow-container {
-        width: 100%; /* Full width */
+        width: 100%;
         margin: 0;
+        height: 300px; /* ปรับความสูงให้สอดคล้อง */
     }
 
-    .mySlides img {
-        width: 105%; /* Slightly larger */
+    .mySlides {
+        height: 300px;
     }
 }
 
@@ -444,20 +451,21 @@ header .banner img {
     }
 
     .product {
-        padding: 0 10px; /* Match objective */
+        padding: 0 10px;
     }
 
     .product h1 {
-        font-size: 1.6rem; /* Slightly larger */
+        font-size: 1.6rem;
     }
 
     .slideshow-container {
-        width: 100%; /* Full width */
+        width: 100%;
         margin: 0;
+        height: 200px; /* ปรับความสูงให้สอดคล้อง */
     }
 
-    .mySlides img {
-        width: 105%; /* Slightly larger */
+    .mySlides {
+        height: 200px;
     }
 }
 </style>
@@ -484,8 +492,8 @@ header .banner img {
     </div>
 
     <div class="objective container my-4">
-        <h1 style="color:#3abe1f;font-weight: bold">วัตถุประสงค์</h1>
-        <p>
+        <h1 style="color:#3abe1f;font-weight: bold;font-size:3rem;">วัตถุประสงค์</h1>
+        <p style="font-size:1.2rem;">
             โครงการนี้มุ่งเน้นการพัฒนาชุมชนหันตะเภาในอำเภอวังน้อย จังหวัดพระนครศรีอยุธยา โดยมีวัตถุประสงค์หลักในการศึกษาพัฒนาระบบควบคุมอัตโนมัติในโรงเรือนเห็ดและสร้างโรงเรือนเห็ดอัจฉริยะเพื่อเพิ่มผลผลิตอย่างมีประสิทธิภาพ, ออกแบบและสร้างเตาเผาชีวมวลไร้ควันเพื่อการผลิตถ่านและน้ำส้มควันไม้เชิงพาณิชย์ที่เป็นมิตรกับสิ่งแวดล้อม, พัฒนาเครื่องสีข้าวอินทรีย์ดัชนีน้ำตาลต่ำเพื่อเพิ่มประสิทธิภาพการผลิตและยกระดับคุณภาพผลิตภัณฑ์ของชุมชน, รวมทั้งศึกษาการนำเทคโนโลยีแพลตฟอร์มดิจิตอลมาใช้เพื่อเพิ่มมูลค่าผลิตภัณฑ์ของภูมิปัญญาท้องถิ่นและพัฒนาแพลตฟอร์มดิจิตอลสำหรับธุรกิจผลิตภัณฑ์ชุมชนอย่างยั่งยืน
         </p>
     </div>
@@ -494,18 +502,18 @@ header .banner img {
         <h1>
             ผลิตภัณฑ์ 
             <a href="products.php">
-                <img src="images/cart2.png" alt="Cart Icon" class="img-fluid" width="50px" height="50px">
+                <img src="images/cart2.png" alt="Cart Icon" class="img-fluid" width="75px" height="75px">
             </a>
         </h1>
         <div class="slideshow-container">
-            <div class="mySlides fade">
+            <div class="mySlides">
                 <img src="images/Element/Product_1.jpg" class="img-fluid" alt="Product 1">
             </div>
-            <div class="mySlides fade">
-                <img src="images/product2.jpg" class="img-fluid" alt="Product 2">
+            <div class="mySlides">
+                <img src="images/Element/Product_2.jpg" class="img-fluid" alt="Product 2">
             </div>
-            <div class="mySlides fade">
-                <img src="images/product3.jpg" class="img-fluid" alt="Product 3">
+            <div class="mySlides">
+                <img src="images/Element/product_3.jpg" class="img-fluid" alt="Product 3">
             </div>
             <a class="prev" onclick="plusSlides(-1)">❮</a>
             <a class="next" onclick="plusSlides(1)">❯</a>
@@ -525,6 +533,11 @@ header .banner img {
         let slideIndex = 1;
         showSlides(slideIndex);
 
+        // เปลี่ยนสไลด์อัตโนมัติทุก 10 วินาที
+        setInterval(() => {
+            plusSlides(1);
+        }, 10000);
+
         function plusSlides(n) {
             showSlides(slideIndex += n);
         }
@@ -537,16 +550,23 @@ header .banner img {
             let i;
             let slides = document.getElementsByClassName("mySlides");
             let dots = document.getElementsByClassName("dot");
-            if (n > slides.length) {slideIndex = 1}
-            if (n < 1) {slideIndex = slides.length}
+
+            if (n > slides.length) { slideIndex = 1; }
+            if (n < 1) { slideIndex = slides.length; }
+
+            // รีเซ็ต opacity ของทุกสไลด์
             for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
+                slides[i].style.opacity = "0";
             }
+
+            // อัปเดต dots
             for (i = 0; i < dots.length; i++) {
                 dots[i].className = dots[i].className.replace(" active", "");
             }
-            slides[slideIndex-1].style.display = "block";
-            dots[slideIndex-1].className += " active";
+
+            // แสดงสไลด์ปัจจุบัน
+            slides[slideIndex - 1].style.opacity = "1";
+            dots[slideIndex - 1].className += " active";
         }
     </script>
 </body>

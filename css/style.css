@@ -38,13 +38,13 @@ header {
 }
 
 .btn-primary {
-    background-color: #2B5914;
+    background-color:#4bd31e ;
     border: none;
     transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: #57b827;
+    background-color: #58ed0d;
 }
 
 .bg-dark-custom {
@@ -105,7 +105,8 @@ iframe {
 .btn {
     white-space: nowrap;
     width: auto; /* ปรับความกว้างของปุ่มให้พอดีกับข้อความ */
-    text-align: right; /* จัดปุ่มไปทางขวา */
+    text-align: center; /* จัดปุ่มไปทางขวา */
+    margin-top: 20px;
 }
 .navbar {
     display: flex;
