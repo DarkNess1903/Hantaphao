@@ -118,6 +118,24 @@ include 'connectDB.php';
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="cart-icon fixed-bottom mb-4 ms-4">
+        <a href="cart.php" class="btn">
+            <i class="fas fa-shopping-cart"></i>
+            <?php
+            if (isset($_SESSION['cart_id'])) {
+                $cart_id = $_SESSION['cart_id'];
+                $query = "SELECT COUNT(*) AS item_count FROM cart_items WHERE cart_id = ?";
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, 'i', $cart_id);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+                if ($row = mysqli_fetch_assoc($result)) {
+                    echo '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">' . $row['item_count'] . '</span>';
+                }
+            }
+            ?>
+        </a>
+    </div>
 </body>
 </html>
 

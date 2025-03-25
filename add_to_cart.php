@@ -59,8 +59,9 @@ if ($product_id > 0 && $quantity > 0 && $price > 0) {
     }
 
     // Execute the statement to add or update the item in the cart
+    // Execute the statement to add or update the item in the cart
     if (mysqli_stmt_execute($stmt)) {
-        header("Location: cart.php"); // ไปที่หน้าตะกร้า
+        header("Location: " . $_SERVER['HTTP_REFERER']); // กลับไปยังหน้าก่อนหน้า
         exit();
     } else {
         die("Error adding item to cart: " . mysqli_error($conn));
