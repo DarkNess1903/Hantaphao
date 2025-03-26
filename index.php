@@ -501,7 +501,7 @@ header .banner img {
     <div class="product container my-4">
         <h1>
             ผลิตภัณฑ์ 
-            <a href="products.php">
+            <a href="product.php">
                 <img src="images/cart2.png" alt="Cart Icon" class="img-fluid" width="75px" height="75px">
             </a>
         </h1>
