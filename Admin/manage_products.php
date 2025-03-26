@@ -4,356 +4,360 @@ include 'connectDB.php';
 
 // ฟังก์ชันคำนวณกำไร
 function calculateProfit($price, $cost) {
-    return $price - $cost; // กำไรต่อชิ้น = ราคาขาย - ต้นทุน
+    return floatval($price) - floatval($cost);
 }
-if (isset($_POST['add_product'])) {
-    $name = $_POST['product_name'] ?? '';
-    $price = $_POST['price'] ?? 0.0;
-    $cost = $_POST['cost'] ?? 0.0;
-    $stock = $_POST['stock'] ?? 0;
-    $product_description = $_POST['product_description'] ?? '';
-    $category_id = $_POST['category_id'] ?? 0;  // รับค่าหมวดหมู่จากฟอร์ม
-    $weight = $_POST['weight'] ?? 0.0;  // รับค่าน้ำหนัก
-    $shipping_cost = $_POST['shipping_cost'] ?? 0.0;  // รับค่าส่ง
 
+// การเพิ่มสินค้า
+if (isset($_POST['add_product'])) {
+    $name = trim($_POST['product_name'] ?? '');
+    $price = floatval($_POST['price'] ?? 0.0);
+    $cost = floatval($_POST['cost'] ?? 0.0);
+    $stock = intval($_POST['stock'] ?? 0);
+    $product_description = trim($_POST['product_description'] ?? '');
+    $category_id = intval($_POST['category_id'] ?? 0);
+    $weight = floatval($_POST['weight'] ?? 0.0);
+    $shipping_cost = floatval($_POST['shipping_cost'] ?? 0.0);
+
+    // ตรวจสอบข้อมูล
     if (empty($name)) {
-        echo "ชื่อสินค้าต้องไม่ว่าง";
+        echo "<script>alert('ชื่อสินค้าต้องไม่ว่าง'); window.history.back();</script>";
+        exit;
+    }
+    if ($price < 0 || $cost < 0 || $stock < 0 || $weight < 0 || $shipping_cost < 0) {
+        echo "<script>alert('ราคา, ต้นทุน, สต็อก, น้ำหนัก และค่าส่งต้องไม่เป็นค่าติดลบ'); window.history.back();</script>";
         exit;
     }
 
     $image = '';
     if (!empty($_FILES['image']['name'])) {
-        $image = $_FILES['image']['name'];
-        move_uploaded_file($_FILES['image']['tmp_name'], "product/" . $image);
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+        $max_size = 5 * 1024 * 1024; // 5MB
+        if (in_array($_FILES['image']['type'], $allowed_types) && $_FILES['image']['size'] <= $max_size) {
+            $image = time() . '_' . basename($_FILES['image']['name']);
+            $target = "product/" . $image;
+            if (!move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+                echo "<script>alert('ไม่สามารถอัพโหลดรูปภาพได้'); window.history.back();</script>";
+                exit;
+            }
+        } else {
+            echo "<script>alert('รูปภาพต้องเป็น JPG, PNG หรือ GIF และขนาดไม่เกิน 5MB'); window.history.back();</script>";
+            exit;
+        }
     }
 
-    // เพิ่มข้อมูลสินค้าในฐานข้อมูล
-    $stmt = $conn->prepare("INSERT INTO product (name, price, cost, stock_quantity, product_description, image, category_id, weight, shipping_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('ssdissdss', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_cost);
-    
-    if ($stmt->execute()) {
-        echo "<script>alert('เพิ่มสินค้าสำเร็จ');</script>";
-        echo "<script>window.location.href='manage_products.php';</script>";
+    $stmt = $conn->prepare("INSERT INTO product (name, price, cost, stock_quantity, product_description, image, category_id, weight, shipping_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    if (is_numeric($shipping_cost)) {
+        $stmt->bind_param('sddisiddd', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, floatval($shipping_cost));
     } else {
-        echo "เกิดข้อผิดพลาด: " . $stmt->error;
+        $stmt->bind_param('sddisidds', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_cost);
     }
+    $stmt->bind_param('sddisidds', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_cost);
+        
+    if ($stmt->execute()) {
+        echo "<script>alert('เพิ่มสินค้าสำเร็จ'); window.location.href='manage_products.php';</script>";
+    } else {
+        echo "<script>alert('เกิดข้อผิดพลาด: " . addslashes($stmt->error) . "'); window.history.back();</script>";
+    }
+    $stmt->close();
 }
 
-// เมื่อคลิกที่ปุ่มแก้ไข, รับ product_id
+// การแก้ไขสินค้า
 if (isset($_GET['edit_product_id'])) {
-    $product_id = $_GET['edit_product_id'];
-
-    // ดึงข้อมูลสินค้าจากฐานข้อมูล
-    $sql = "SELECT * FROM product WHERE product_id = ?";
-    $stmt = $conn->prepare($sql);
+    $product_id = intval($_GET['edit_product_id']);
+    $stmt = $conn->prepare("SELECT * FROM product WHERE product_id = ?");
     $stmt->bind_param('i', $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
+    
     if ($row = $result->fetch_assoc()) {
-        // เก็บข้อมูลในตัวแปร
-        $name = $row['name'];
-        $price = $row['price'];
-        $cost = $row['cost'];
-        $stock = $row['stock_quantity'];
-        $product_description = $row['product_description'];
-        $image = $row['image'];  // ใช้ค่าภาพเดิมจากฐานข้อมูล
+        $edit_product = $row;
     }
+    $stmt->close();
 }
 
 if (isset($_POST['edit_product'])) {
-    $product_id = $_POST['product_id'] ?? '';
-    $name = $_POST['product_name'] ?? '';
-    $price = $_POST['price'] ?? 0.0;
-    $cost = $_POST['cost'] ?? 0.0;
-    $stock = $_POST['stock'] ?? 0;
-    $product_description = $_POST['product_description'] ?? '';
-    $category_id = $_POST['category_id'] ?? 0;
-    $weight = $_POST['weight'] ?? 0.0;
-    $shipping_cost = $_POST['shipping_cost'] ?? 0.0;
+    $product_id = intval($_POST['product_id'] ?? 0);
+    $name = trim($_POST['product_name'] ?? '');
+    $price = floatval($_POST['price'] ?? 0.0);
+    $cost = floatval($_POST['cost'] ?? 0.0);
+    $stock = intval($_POST['stock'] ?? 0);
+    $product_description = trim($_POST['product_description'] ?? '');
+    $category_id = intval($_POST['category_id'] ?? 0);
+    $weight = floatval($_POST['weight'] ?? 0.0);
+    $shipping_cost = floatval($_POST['shipping_cost'] ?? 0.0);
 
     if (empty($name)) {
-        echo "ชื่อสินค้าต้องไม่ว่าง";
+        echo "<script>alert('ชื่อสินค้าต้องไม่ว่าง'); window.history.back();</script>";
         exit;
     }
 
-    $image = '';
+    $stmt = $conn->prepare("SELECT image FROM product WHERE product_id = ?");
+    $stmt->bind_param('i', $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $current_image = $result->fetch_assoc()['image'];
+
+    $image = $current_image;
     if (!empty($_FILES['image']['name'])) {
-        $image = $_FILES['image']['name'];
-        move_uploaded_file($_FILES['image']['tmp_name'], "product/" . $image);
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+        $max_size = 5 * 1024 * 1024; // 5MB
+        if (in_array($_FILES['image']['type'], $allowed_types) && $_FILES['image']['size'] <= $max_size) {
+            $image = time() . '_' . basename($_FILES['image']['name']);
+            $target = "product/" . $image;
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $target) && $current_image && file_exists("product/" . $current_image)) {
+                unlink("product/" . $current_image);
+            }
+        }
     }
 
-    // อัปเดตข้อมูลในฐานข้อมูล
-    $stmt = $conn->prepare("UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=?, image=?, category_id=?, weight=?, shipping_cost=? WHERE product_id=?");
-    $stmt->bind_param('ssdissdssi', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_cost, $product_id);
+    $stmt = $conn->prepare("UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=?, image=?, category_id=?, weight=?, shipping_type=? WHERE product_id=?");
+    if (is_numeric($shipping_cost)) {
+        $stmt->bind_param('sddisidddi', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, floatval($shipping_cost), $product_id);
+    } else {
+        $stmt->bind_param('sddisiddsi', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_cost, $product_id);
+    }
+    $stmt->bind_param('sddisiddsi', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_cost, $product_id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('อัพเดทสินค้าสำเร็จ');</script>";
-        echo "<script>window.location.href='manage_products.php';</script>";
+        echo "<script>alert('อัพเดทสินค้าสำเร็จ'); window.location.href='manage_products.php';</script>";
     } else {
-        echo "เกิดข้อผิดพลาด: " . $stmt->error;
+        echo "<script>alert('เกิดข้อผิดพลาด: " . addslashes($stmt->error) . "'); window.history.back();</script>";
     }
+    $stmt->close();
 }
 
-// การเติมสต็อกสินค้า
+// การเติมสต็อก
 if (isset($_POST['restock_product'])) {
-    $product_id = $_POST['product_id'];
-    $additional_stock = $_POST['quantity'];
+    $product_id = intval($_POST['product_id']);
+    $additional_stock = intval($_POST['quantity']);
 
-    if (is_numeric($additional_stock) && $additional_stock > 0) {
-        $sql = "UPDATE product SET stock_quantity = stock_quantity + ? WHERE product_id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ii', $additional_stock, $product_id);
-
-        if ($stmt->execute()) {
-            echo "<script>alert('เติมสต็อกสำเร็จ');</script>";
-            echo "<script>window.location.href='manage_products.php';</script>";
-        } else {
-            echo "เกิดข้อผิดพลาด: " . $stmt->error;
-        }
-    } else {
-        echo "จำนวนที่เติมต้องเป็นตัวเลขที่มากกว่าศูนย์";
+    if ($additional_stock <= 0) {
+        echo "<script>alert('จำนวนที่เติมต้องมากกว่าศูนย์'); window.history.back();</script>";
+        exit;
     }
-}
-// รัน SQL Query
-$sql = "SELECT p.product_id, p.name, p.price, p.cost, p.stock_quantity, p.image, p.product_description, p.weight, p.shipping_cost, c.category_id, c.category_name
-        FROM product p
-        LEFT JOIN category c ON p.category_id = c.category_id";
-$result = mysqli_query($conn, $sql);
-$conn->close();
 
+    $stmt = $conn->prepare("UPDATE product SET stock_quantity = stock_quantity + ? WHERE product_id=?");
+    $stmt->bind_param('ii', $additional_stock, $product_id);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('เติมสต็อกสำเร็จ'); window.location.href='manage_products.php';</script>";
+    } else {
+        echo "<script>alert('เกิดข้อผิดพลาด: " . addslashes($stmt->error) . "'); window.history.back();</script>";
+    }
+    $stmt->close();
+}
+
+// การลบสินค้า
+if (isset($_GET['delete'])) {
+    $product_id = intval($_GET['delete']);
+    $stmt = $conn->prepare("SELECT image FROM product WHERE product_id = ?");
+    $stmt->bind_param('i', $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $image = $result->fetch_assoc()['image'];
+
+    $stmt = $conn->prepare("DELETE FROM product WHERE product_id = ?");
+    $stmt->bind_param('i', $product_id);
+    
+    if ($stmt->execute()) {
+        if ($image && file_exists("product/" . $image)) {
+            unlink("product/" . $image);
+        }
+        echo "<script>alert('ลบสินค้าสำเร็จ'); window.location.href='manage_products.php';</script>";
+    } else {
+        echo "<script>alert('เกิดข้อผิดพลาด: " . addslashes($stmt->error) . "'); window.history.back();</script>";
+    }
+    $stmt->close();
+}
+
+// ดึงข้อมูลสินค้า
+$sql = "SELECT p.*, c.category_name 
+        FROM product p 
+        LEFT JOIN category c ON p.category_id = c.category_id";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการสินค้า</title>
     <style>
-        .modal-body img {
-            max-width: 100%;
+        .product-image {
+            max-width: 100px;
             height: auto;
+            cursor: pointer;
         }
-
-        .table th, .table td {
-            vertical-align: middle;
-        }
-
         .table-responsive {
             overflow-x: auto;
         }
     </style>
 </head>
 <body>
-<!-- โมดัลฟอร์มเพิ่มสินค้า -->
-<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addProductModalLabel">เพิ่มสินค้า</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="manage_products.php" method="post" enctype="multipart/form-data">
-                    <!-- ชื่อสินค้า -->
-                    <div class="form-group">
-                        <label for="product_name">ชื่อสินค้า:</label>
-                        <input type="text" id="product_name" name="product_name" class="form-control" required>
-                    </div>
-                    
-                    <!-- หมวดหมู่สินค้า -->
-                    <div class="form-group">
-                        <label for="category_id">หมวดหมู่สินค้า:</label>
-                        <select id="category_id" name="category_id" class="form-control" required>
-                            <option value="">เลือกหมวดหมู่</option>
-                            <?php
-                            include 'connectDB.php';
-                            $categoryQuery = "SELECT * FROM category";
-                            $categoryResult = mysqli_query($conn, $categoryQuery);
-
-                            while ($category = mysqli_fetch_assoc($categoryResult)) {
-                                echo "<option value='{$category['category_id']}'>" . htmlspecialchars($category['category_name']) . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-
-                    <!-- ราคา -->
-                    <div class="form-group">
-                        <label for="price">ราคาขาย:</label>
-                        <input type="number" id="price" name="price" class="form-control" step="0.01" required>
-                    </div>
-                    
-                    <!-- ต้นทุน -->
-                    <div class="form-group">
-                        <label for="cost">ต้นทุน:</label>
-                        <input type="number" id="cost" name="cost" class="form-control" step="0.01" required>
-                    </div>
-                    
-                    <!-- สต็อก -->
-                    <div class="form-group">
-                        <label for="stock">สต็อก:</label>
-                        <input type="number" id="stock" name="stock" class="form-control" required>
-                    </div>
-
-                    <!-- น้ำหนักสินค้า -->
-                    <div class="form-group">
-                        <label for="weight">น้ำหนักสินค้า (กิโลกรัม):</label>
-                        <input type="number" id="weight" name="weight" class="form-control" step="0.01" required>
-                    </div>
-
-                    <!-- ค่าส่งสินค้า -->
-                    <div class="form-group">
-                        <label for="shipping_cost">ค่าส่งสินค้า (บาท):</label>
-                        <input type="number" id="shipping_cost" name="shipping_cost" class="form-control" step="0.01" required>
-                    </div>
-
-                    <!-- รายละเอียดสินค้า -->
-                    <div class="form-group">
-                        <label for="product_description">รายละเอียดสินค้า:</label>
-                        <textarea id="product_description" name="product_description" class="form-control"></textarea>
-                    </div>
-
-                    <!-- รูปภาพสินค้า -->
-                    <div class="form-group">
-                        <label for="image">รูปภาพสินค้า:</label>
-                        <input type="file" id="image" name="image" class="form-control">
-                    </div>
-
-                    <button type="submit" name="add_product" class="btn btn-primary">เพิ่มสินค้า</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- โมดัลฟอร์มแก้ไขสินค้า -->
-<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editProductModalLabel">แก้ไขสินค้า</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editProductForm" action="manage_products.php" method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
-                    
-                    <!-- ชื่อสินค้า -->
-                    <div class="form-group">
-                        <label for="edit_product_name">ชื่อสินค้า:</label>
-                        <input type="text" id="edit_product_name" name="product_name" class="form-control" value="<?php echo htmlspecialchars($name); ?>" required>
-                    </div>
-
-                    <!-- หมวดหมู่สินค้า -->
-                    <div class="form-group">
-                        <label for="edit_category">หมวดหมู่สินค้า:</label>
-                        <select id="edit_category" name="category_id" class="form-control">
-                            <?php
-                            // ดึงรายการหมวดหมู่ทั้งหมดจากฐานข้อมูล
-                            $categorySql = "SELECT * FROM category";
-                            $categoryResult = mysqli_query($conn, $categorySql);
-                            
-                            while ($category = mysqli_fetch_assoc($categoryResult)) {
-                                // กำหนดให้หมวดหมู่ที่ตรงกับสินค้าที่กำลังแก้ไขถูกเลือก
-                                $selected = $category['category_id'] == $category_id ? 'selected' : '';
-                                echo "<option value=\"{$category['category_id']}\" {$selected}>{$category['category_name']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-
-                    <!-- ราคา -->
-                    <div class="form-group">
-                        <label for="edit_price">ราคา:</label>
-                        <input type="number" id="edit_price" name="price" class="form-control" step="0.01" value="<?php echo htmlspecialchars($price); ?>" required>
-                    </div>
-                    
-                    <!-- ต้นทุน -->
-                    <div class="form-group">
-                        <label for="edit_cost">ต้นทุน:</label>
-                        <input type="number" id="edit_cost" name="cost" class="form-control" step="0.01" value="<?php echo htmlspecialchars($cost); ?>" required>
-                    </div>
-                    
-                    <!-- สต็อก -->
-                    <div class="form-group">
-                        <label for="edit_stock">สต็อก:</label>
-                        <input type="number" id="edit_stock" name="stock" class="form-control" value="<?php echo htmlspecialchars($stock); ?>" required>
-                    </div>
-
-                    <!-- น้ำหนักสินค้า -->
-                    <div class="form-group">
-                        <label for="edit_weight">น้ำหนักสินค้า (กิโลกรัม):</label>
-                        <input type="number" id="edit_weight" name="weight" class="form-control" step="0.01" value="<?php echo htmlspecialchars($weight); ?>" required>
-                    </div>
-
-                    <!-- ค่าส่งสินค้า -->
-                    <div class="form-group">
-                        <label for="edit_shipping_cost">ค่าส่งสินค้า (บาท):</label>
-                        <input type="number" id="edit_shipping_cost" name="shipping_cost" class="form-control" step="0.01" value="<?php echo htmlspecialchars($shipping_cost); ?>" required>
-                    </div>
-
-                    <!-- รายละเอียดสินค้า -->
-                    <div class="form-group">
-                        <label for="edit_product_description">รายละเอียดสินค้า:</label>
-                        <textarea id="edit_product_description" name="product_description" class="form-control"><?php echo htmlspecialchars($product_description); ?></textarea>
-                    </div>
-
-                    <!-- รูปภาพสินค้า -->
-                    <div class="form-group">
-                        <label for="edit_image">รูปภาพสินค้า:</label>
-                        <input type="file" id="edit_image" name="image" class="form-control">
-                    </div>
-                    
-                    <button type="submit" name="edit_product" class="btn btn-primary">อัพเดทสินค้า</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal สำหรับเติมสต็อก -->
-<div class="modal fade" id="restockModal" tabindex="-1" role="dialog" aria-labelledby="restockModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="restockModalLabel">เติมสต็อกสินค้า</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="restockForm">
-                    <input type="hidden" id="restock_product_id" name="product_id">
-                    <div class="form-group">
-                        <label for="restock_quantity">จำนวนที่เติม:</label>
-                        <input type="number" class="form-control" id="restock_quantity" name="quantity" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                        <button type="submit" class="btn btn-primary">เติมสต็อก</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- ตารางสินค้า -->
 <div class="container mt-4">
     <h1 class="text-center mb-4">จัดการสินค้า</h1>
-
-    <!-- ปุ่มเพิ่มสินค้า -->
-    <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#addProductModal">
+    
+    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addProductModal">
         เพิ่มสินค้า
     </button>
 
-    <!-- ตารางสินค้า -->
-    <div class="table-responsive mt-4">
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">เพิ่มสินค้า</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="product_name" class="form-label">ชื่อสินค้า:</label>
+                            <input type="text" class="form-control" id="product_name" name="product_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="category_id" class="form-label">หมวดหมู่:</label>
+                            <select class="form-select" id="category_id" name="category_id" required>
+                                <option value="">เลือกหมวดหมู่</option>
+                                <?php
+                                $cat_query = $conn->query("SELECT * FROM category");
+                                while ($cat = $cat_query->fetch_assoc()) {
+                                    echo "<option value='{$cat['category_id']}'>" . htmlspecialchars($cat['category_name']) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">ราคาขาย:</label>
+                            <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cost" class="form-label">ต้นทุน:</label>
+                            <input type="number" step="0.01" class="form-control" id="cost" name="cost" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">สต็อก:</label>
+                            <input type="number" class="form-control" id="stock" name="stock" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="weight" class="form-label">น้ำหนัก (กก.):</label>
+                            <input type="number" step="0.01" class="form-control" id="weight" name="weight" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shipping_cost" class="form-label">ประเภทการส่ง:</label>
+                            <select class="form-select" id="shipping_cost" name="shipping_cost" required>
+                                <option value="normal">Normal</option>
+                                <option value="express">Express</option>
+                                <option value="free">Free Shipping</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product_description" class="form-label">รายละเอียด:</label>
+                            <textarea class="form-control" id="product_description" name="product_description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">รูปภาพ:</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        </div>
+                        <button type="submit" name="add_product" class="btn btn-primary">เพิ่มสินค้า</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductModalLabel">แก้ไขสินค้า</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="product_id" id="edit_product_id">
+                        <div class="mb-3">
+                            <label for="edit_product_name" class="form-label">ชื่อสินค้า:</label>
+                            <input type="text" class="form-control" id="edit_product_name" name="product_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_category_id" class="form-label">หมวดหมู่:</label>
+                            <select class="form-select" id="edit_category_id" name="category_id" required>
+                                <?php
+                                $cat_query = $conn->query("SELECT * FROM category");
+                                while ($cat = $cat_query->fetch_assoc()) {
+                                    echo "<option value='{$cat['category_id']}'>" . htmlspecialchars($cat['category_name']) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_price" class="form-label">ราคาขาย:</label>
+                            <input type="number" step="0.01" class="form-control" id="edit_price" name="price" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_cost" class="form-label">ต้นทุน:</label>
+                            <input type="number" step="0.01" class="form-control" id="edit_cost" name="cost" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_stock" class="form-label">สต็อก:</label>
+                            <input type="number" class="form-control" id="edit_stock" name="stock" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_weight" class="form-label">น้ำหนัก (กก.):</label>
+                            <input type="number" step="0.01" class="form-control" id="edit_weight" name="weight" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shipping_cost" class="form-label">ประเภทการส่ง:</label>
+                            <select class="form-select" id="shipping_cost" name="shipping_cost" required>
+                                <option value="normal">Normal</option>
+                                <option value="express">Express</option>
+                                <option value="free">Free Shipping</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_product_description" class="form-label">รายละเอียด:</label>
+                            <textarea class="form-control" id="edit_product_description" name="product_description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_image" class="form-label">รูปภาพ:</label>
+                            <input type="file" class="form-control" id="edit_image" name="image" accept="image/*">
+                        </div>
+                        <button type="submit" name="edit_product" class="btn btn-primary">อัพเดทสินค้า</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restock Modal -->
+    <div class="modal fade" id="restockModal" tabindex="-1" aria-labelledby="restockModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="restockModalLabel">เติมสต็อกสินค้า</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <input type="hidden" id="restock_product_id" name="product_id">
+                        <div class="mb-3">
+                            <label for="restock_quantity" class="form-label">จำนวนที่เติม:</label>
+                            <input type="number" class="form-control" id="restock_quantity" name="quantity" min="1" required>
+                        </div>
+                        <button type="submit" name="restock_product" class="btn btn-primary">เติมสต็อก</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Table -->
+    <div class="table-responsive">
         <table class="table table-striped table-bordered text-center">
-            <thead>
+            <thead class="table-dark">
                 <tr>
                     <th>สินค้า</th>
                     <th>ราคา</th>
@@ -361,142 +365,103 @@ $conn->close();
                     <th>สต็อก</th>
                     <th>กำไร</th>
                     <th>หมวดหมู่</th>
-                    <th>น้ำหนักสินค้า</th>
-                    <th>ค่าส่งสินค้า</th>
-                    <th>รูปภาพสินค้า</th>
-                    <th>รายละเอียดสินค้า</th>
+                    <th>น้ำหนัก</th>
+                    <th>ประการจัดส่ง</th>
+                    <th>รูปภาพ</th>
+                    <th>รายละเอียด</th>
                     <th>จัดการ</th>
                 </tr>
             </thead>
             <tbody>
-            <?php while ($row = mysqli_fetch_assoc($result)) { 
-                // คำนวณกำไรจากราคาขายและต้นทุน
-                $profit_per_piece = $row['price'] - $row['cost'];
-                $total_profit = $profit_per_piece * $row['stock_quantity']; // คำนวณจากจำนวนสินค้าตามน้ำหนัก
-            ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['name']); ?></td>
-                    <td><?php echo number_format($row['price'], 2); ?> ฿</td>
-                    <td><?php echo number_format($row['cost'], 2); ?> ฿</td>
-                    <td><?php echo $row['stock_quantity']; ?> </td>
-                    <td><?php echo number_format($profit_per_piece, 2); ?> ฿</td>
-                    <td><?php echo htmlspecialchars($row['category_name']); ?></td> <!-- แสดงหมวดหมู่ -->
-                    <td><?php echo number_format($row['weight'], 2); ?> กิโลกรัม</td> <!-- แสดงน้ำหนักสินค้า -->
-                    <td><?php echo number_format($row['shipping_cost'], 2); ?> ฿</td> <!-- แสดงค่าส่งสินค้า -->
+                    <td><?= htmlspecialchars($row['name']) ?></td>
+                    <td><?= number_format($row['price'], 2) ?> ฿</td>
+                    <td><?= number_format($row['cost'], 2) ?> ฿</td>
+                    <td><?= $row['stock_quantity'] ?></td>
+                    <td><?= number_format(calculateProfit($row['price'], $row['cost']), 2) ?> ฿</td>
+                    <td><?= htmlspecialchars($row['category_name'] ?? 'ไม่มีหมวดหมู่') ?></td>
+                    <td><?= number_format($row['weight'], 2) ?> กก.</td>
                     <td>
-                        <img src="product/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" style="width: 100px; height: auto;">
+                        <?php 
+                        if (is_numeric($row['shipping_type'])) {
+                            echo number_format(floatval($row['shipping_type']), 2) . ' ฿';
+                        } else {
+                            echo htmlspecialchars($row['shipping_type']);
+                        }
+                        ?>
                     </td>
-                    <td><?php echo htmlspecialchars($row['product_description']); ?></td>
                     <td>
-    <div class="btn-group-vertical" role="group">
-        <!-- ปุ่มแก้ไข -->
-        <button class="btn btn-warning btn-sm editBtn" data-toggle="modal" data-target="#editProductModal"
-            data-id="<?php echo $row['product_id']; ?>"
-            data-name="<?php echo htmlspecialchars($row['name']); ?>"
-            data-price="<?php echo htmlspecialchars($row['price']); ?>"
-            data-cost="<?php echo htmlspecialchars($row['cost']); ?>"
-            data-stock="<?php echo htmlspecialchars($row['stock_quantity']); ?>"
-            data-description="<?php echo htmlspecialchars($row['product_description']); ?>"
-            data-category="<?php echo htmlspecialchars($row['category_name']); ?>"
-            data-weight="<?php echo htmlspecialchars($row['weight']); ?>"
-            data-shipping-cost="<?php echo htmlspecialchars($row['shipping_cost']); ?>">
-            <i class="fas fa-edit"></i>
-        </button>
-
-        <!-- ปุ่มเติมสต็อก -->
-        <button class="btn btn-info btn-sm restockBtn" data-toggle="modal" data-target="#restockModal" data-id="<?php echo $row['product_id']; ?>">
-            <i class="fas fa-box-open"></i>
-        </button>
-
-        <!-- ปุ่มลบ -->
-        <a href="manage_products.php?delete=<?php echo $row['product_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้า?');">
-            <i class="fas fa-trash-alt"></i>
-        </a>
-    </div>
-</td>
-
+                        <?php if ($row['image']): ?>
+                            <img src="product/<?= htmlspecialchars($row['image']) ?>" class="product-image" alt="<?= htmlspecialchars($row['name']) ?>">
+                        <?php else: ?>
+                            ไม่มีรูปภาพ
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($row['product_description']) ?></td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-warning btn-sm edit-btn" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editProductModal"
+                                data-id="<?= $row['product_id'] ?>"
+                                data-name="<?= htmlspecialchars($row['name']) ?>"
+                                data-price="<?= $row['price'] ?>"
+                                data-cost="<?= $row['cost'] ?>"
+                                data-stock="<?= $row['stock_quantity'] ?>"
+                                data-description="<?= htmlspecialchars($row['product_description']) ?>"
+                                data-category="<?= $row['category_id'] ?>"
+                                data-weight="<?= $row['weight'] ?>"
+                                data-shipping="<?= $row['shipping_type'] ?>">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-info btn-sm restock-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#restockModal"
+                                data-id="<?= $row['product_id'] ?>">
+                                <i class="fas fa-box-open"></i>
+                            </button>
+                            <a href="?delete=<?= $row['product_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('แน่ใจหรือไม่ว่าต้องการลบ?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
                 </tr>
-            <?php } ?>
+            <?php endwhile; ?>
             </tbody>
         </table>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // เมื่อคลิกปุ่มแก้ไขสินค้า
-    $(document).on('click', '.editBtn', function() {
-        const productId = $(this).data('id');
-        const productName = $(this).data('name');
-        const price = $(this).data('price');
-        const cost = $(this).data('cost');
-        const stock = $(this).data('stock');
-        const description = $(this).data('description');
-        const categoryId = $(this).data('category-id'); // เปลี่ยนชื่อเป็น category-id เพื่อให้ตรงกับข้อมูลที่ใช้
-        const weight = $(this).data('weight'); // กำหนดน้ำหนักสินค้าหากมีข้อมูลนี้
-        const shippingCost = $(this).data('shipping-cost'); // กำหนดค่าส่งสินค้า
-
-        // กำหนดค่าให้กับฟิลด์ในฟอร์มแก้ไข
-        $('#edit_product_id').val(productId); // hidden field สำหรับ product_id
-        $('#edit_product_name').val(productName);
-        $('#edit_price').val(price);
-        $('#edit_cost').val(cost);
-        $('#edit_stock').val(stock);
-        $('#edit_product_description').val(description);
-        $('#edit_category').val(categoryId); // กำหนดค่าหมวดหมู่ในฟอร์ม
-        $('#edit_weight').val(weight); // กำหนดค่าน้ำหนัก
-        $('#edit_shipping_cost').val(shippingCost); // กำหนดค่าส่ง
-
-        // แสดง Modal แก้ไขสินค้า
-        $('#editProductModal').modal('show');
+$(document).ready(function() {
+    // Edit button handler
+    $('.edit-btn').click(function() {
+        const data = $(this).data();
+        $('#edit_product_id').val(data.id);
+        $('#edit_product_name').val(data.name);
+        $('#edit_price').val(data.price);
+        $('#edit_cost').val(data.cost);
+        $('#edit_stock').val(data.stock);
+        $('#edit_product_description').val(data.description);
+        $('#edit_category_id').val(data.category);
+        $('#edit_weight').val(data.weight);
+        $('#edit_shipping_cost').val(data.shipping);
     });
 
-    // เมื่อคลิกปุ่มเติมสต็อก
-    $(document).on('click', '.restockBtn', function() {
-        const productId = $(this).data('id');
-        $('#restock_product_id').val(productId); // กำหนดค่า product_id ในฟอร์มเติมสต็อก
-        $('#restockModal').modal('show'); // แสดง Modal
+    // Restock button handler
+    $('.restock-btn').click(function() {
+        $('#restock_product_id').val($(this).data('id'));
     });
 
-    // เมื่อส่งฟอร์มเติมสต็อก
-    $('#restockForm').on('submit', function(e) {
-        e.preventDefault(); // ป้องกันการส่งฟอร์มแบบปกติ
-        const productId = $('#restock_product_id').val();
-        const quantity = $('#restock_quantity').val();
-
-        // ส่งข้อมูลไปยังเซิร์ฟเวอร์
-        $.ajax({
-            url: 'manage_products.php', // เปลี่ยนให้ตรงกับ URL ที่ต้องการส่งข้อมูล
-            method: 'POST',
-            data: { restock_product: true, product_id: productId, quantity: quantity },
-            success: function(response) {
-                alert('เติมสต็อกสำเร็จ'); // แจ้งเตือนเมื่อเติมสต็อกสำเร็จ
-                $('#restockModal').modal('hide'); // ปิด Modal หลังเติมสต็อกเสร็จ
-                location.reload(); // โหลดหน้าใหม่เพื่อดูข้อมูลที่อัปเดต
-            },
-            error: function(xhr, status, error) {
-                alert('เกิดข้อผิดพลาด: ' + error); // แจ้งเตือนเมื่อเกิดข้อผิดพลาด
-            }
-        });
+    // Image preview on click
+    $('.product-image').click(function() {
+        window.open($(this).attr('src'), '_blank');
     });
-
-    // เมื่อคลิกปุ่มลบสินค้า
-    $(document).on('click', '.deleteBtn', function(e) {
-        e.preventDefault(); // ป้องกันการเปลี่ยนหน้า
-        const productId = $(this).data('id');
-        if (confirm('คุณแน่ใจว่าจะลบสินค้านี้?')) {
-            $.ajax({
-                url: 'manage_products.php',
-                method: 'POST',
-                data: { delete_product: true, product_id: productId },
-                success: function(response) {
-                    location.reload(); // โหลดหน้าใหม่เพื่อตรวจสอบการลบ
-                },
-                error: function(xhr, status, error) {
-                    alert('เกิดข้อผิดพลาด: ' + error);
-                }
-            });
-        }
-    });
+});
 </script>
 </body>
 </html>
+<?php $conn->close(); ?>

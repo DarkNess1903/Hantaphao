@@ -16,9 +16,9 @@ if ($order_id <= 0) {
     die("รหัสคำสั่งซื้อไม่ถูกต้อง.");
 }
 
-// ดึงข้อมูลคำสั่งซื้อ
+// ดึงข้อมูลคำสั่งซื้อ (รวม address และ shipping_fee)
 $order_query = "
-    SELECT order_id, order_date, total_amount, payment_slip, status, tracking_number
+    SELECT order_id, customer_id, order_date, total_amount, payment_slip, status, tracking_number, address, shipping_fee
     FROM orders
     WHERE order_id = ? AND customer_id = ?";
 $stmt = mysqli_prepare($conn, $order_query);
@@ -32,13 +32,12 @@ if (mysqli_num_rows($order_result) === 0) {
 
 $order = mysqli_fetch_assoc($order_result);
 
-// ดึงรายละเอียดสินค้า รวมถึง weight_in_grams
+// ดึงรายละเอียดสินค้า
 $details_query = "
     SELECT p.name, p.image, od.quantity, od.price
     FROM orderdetails od
     JOIN product p ON od.product_id = p.product_id
-    WHERE od.order_id = ?
-";
+    WHERE od.order_id = ?";
 $stmt = mysqli_prepare($conn, $details_query);
 mysqli_stmt_bind_param($stmt, 'i', $order_id);
 mysqli_stmt_execute($stmt);
@@ -48,80 +47,160 @@ $details_result = mysqli_stmt_get_result($stmt);
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <title>รายละเอียดคำสั่งซื้อ</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- CSS Links -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <title>รายละเอียดคำสั่งซื้อ - Meat Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-dark: #2a6041;
+            --green-medium: #5da271;
+            --green-light: #eef7f1;
+            --green-accent: #b8e0c3;
+            --black: #1c2526;
+        }
 
-    <!-- JavaScript Links -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/script.js"></script>
+        body {
+            background-color: #f7f9f8;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        /* Header */
+        header {
+            background: #212529!important;
+            color: white;
+            padding: 0.75rem 0; /* ลดความสูง header อีกจาก 1rem */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin-top: -15px; /* ลดระยะห่างจากขอบบน */
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            padding-bottom:15px ;
+        }
+
+        .order-details {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 850px;
+        }
+
+        h2, h3 {
+            color: var(--green-dark);
+            font-weight: 600;
+        }
+
+        .order-info {
+            background: var(--green-light);
+            border: 1px solid var(--green-accent);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .order-info p {
+            margin: 0.5rem 0;
+            color: #444;
+        }
+        .order-info a {
+            color: var(--green-medium);
+            text-decoration: none;
+        }
+        .order-info a:hover {
+            text-decoration: underline;
+        }
+
+        .list-group-item {
+            background: var(--green-light);
+            border: 1px solid var(--green-accent);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+        .list-group-item img {
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+        .modal-img {
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .order-details {
+                padding: 1rem;
+            }
+            header h1 {
+                font-size: 1.25rem;
+            }
+            .list-group-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            .list-group-item img {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header class="bg-dark text-white text-center py-3">
+    <?php include 'topnavbar.php'; ?>
+
+    <header class="text-center">
         <h1>รายละเอียดคำสั่งซื้อ</h1>
     </header>
-    <main class="container mt-4">
-    <section class="order-details">
-        <h2>รหัสคำสั่งซื้อ: <?php echo htmlspecialchars($order['order_id']); ?></h2>
-        <p><strong>วันที่สั่งซื้อ:</strong> <?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($order['order_date']))); ?></p>
-        <p><strong>ยอดรวมทั้งหมด:</strong> ฿<?php echo number_format($order['total_amount'], 2); ?></p>
-        
-        <?php
-        $payment_slip = isset($order['payment_slip']) ? $order['payment_slip'] : '';
-        $image_path = "./Admin/uploads/" . htmlspecialchars(basename($payment_slip));
-        $image_url = file_exists($image_path) && is_readable($image_path) ? $image_path : "./Admin/uploads/";
-        ?>
-        <p><strong>สลิปการชำระเงิน:</strong>
-            <a href="#" class="view-payment-slip" data-image="<?php echo htmlspecialchars($image_url, ENT_QUOTES, 'UTF-8'); ?>">
-                <i class="fas fa-file-invoice-dollar"></i> ดูสลิปการชำระเงิน
-            </a>
-        </p>
-        <p><strong>สถานะ:</strong> <?php echo htmlspecialchars($order['status']); ?></p>
-        <?php if ($order['status'] === 'กำลังจัดส่ง'): ?>
-            <p><strong>เลขพัสดุ:</strong> <?php echo htmlspecialchars($order['tracking_number']); ?></p>
-        <?php endif; ?>
 
-        <h3>รายการสินค้า</h3>
-        <ul class="list-group">
-            <?php while ($detail = mysqli_fetch_assoc($details_result)): ?>
+    <main class="container">
+        <section class="order-details">
+            <h2>รหัสคำสั่งซื้อ: <?php echo htmlspecialchars($order['order_id']); ?></h2>
+            <div class="order-info">
+                <p><strong>วันที่สั่งซื้อ:</strong> <?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($order['order_date']))); ?></p>
+                <p><strong>ยอดรวมสินค้า:</strong> ฿<?php echo number_format($order['total_amount'] - $order['shipping_fee'], 2); ?></p>
+                <p><strong>ค่าจัดส่ง:</strong> ฿<?php echo number_format($order['shipping_fee'], 2); ?></p>
+                <p><strong>ยอดรวมทั้งหมด:</strong> ฿<?php echo number_format($order['total_amount'], 2); ?></p>
+                <p><strong>ที่อยู่จัดส่ง:</strong> <?php echo htmlspecialchars($order['address']); ?></p>
                 <?php
-                    // ตรวจสอบหน่วยของสินค้า
-                    $quantity_text = '';
-                    $weight_in_grams = $detail['weight_in_grams'];
-                    $unit = ($weight_in_grams >= 1000) ? '1kg' : '1piece'; // สมมุติหน่วยน้ำหนัก
-
-                    if ($unit == '1kg') {
-                        // แสดงจำนวนเป็นกิโลกรัม
-                        $quantity_kg = $weight_in_grams / 1000;
-                        $quantity_text = "จำนวน: " . number_format($quantity_kg, 2) . " กก.";
-                        $total = $quantity_kg * $detail['price'];
-                    } else if ($unit == '1piece') {
-                        // แสดงจำนวนเป็นชิ้น
-                        $quantity_text = "จำนวน: " . $detail['quantity'] . " ชิ้น";
-                        $total = $detail['quantity'] * $detail['price'];
-                    }
+                $payment_slip = $order['payment_slip'] ?? '';
+                $image_path = "./Admin/uploads/" . htmlspecialchars(basename($payment_slip));
+                $image_url = file_exists($image_path) && is_readable($image_path) ? $image_path : "./Admin/uploads/default-slip.jpg"; // รูป default ถ้าไม่มี
                 ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <img src="./Admin/product/<?php echo htmlspecialchars($detail['image']); ?>" alt="<?php echo htmlspecialchars($detail['name']); ?>" width="100" class="me-2">
-                        <div>
-                            <p class="mb-0"><?php echo htmlspecialchars($detail['name']); ?></p>
-                            <small><?php echo $quantity_text; ?></small>
+                <p><strong>สลิปการชำระเงิน:</strong>
+                    <a href="#" class="view-payment-slip" data-image="<?php echo htmlspecialchars($image_url, ENT_QUOTES, 'UTF-8'); ?>">
+                        <i class="fas fa-file-invoice-dollar"></i> ดูสลิป
+                    </a>
+                </p>
+                <p><strong>สถานะ:</strong> <?php echo htmlspecialchars($order['status']); ?></p>
+                <?php if ($order['tracking_number'] && $order['status'] === 'กำลังจัดส่ง'): ?>
+                    <p><strong>เลขพัสดุ:</strong> <?php echo htmlspecialchars($order['tracking_number']); ?></p>
+                <?php endif; ?>
+            </div>
+
+            <h3>รายการสินค้า</h3>
+            <ul class="list-group">
+                <?php while ($detail = mysqli_fetch_assoc($details_result)): ?>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="./Admin/product/<?php echo htmlspecialchars($detail['image']); ?>" alt="<?php echo htmlspecialchars($detail['name']); ?>" width="80" class="me-3">
+                            <div>
+                                <p class="mb-0"><?php echo htmlspecialchars($detail['name']); ?></p>
+                                <small>จำนวน: <?php echo $detail['quantity']; ?> ชิ้น</small>
+                            </div>
                         </div>
-                    </div>
-                    <p class="mb-0">ราคา: ฿<?php echo number_format($detail['price'], 2); ?> - ยอดรวม: ฿<?php echo number_format($total, 2); ?></p>
-                </li>
-            <?php endwhile; ?>
-        </ul>
-    </section>
-</main>
-    <!-- โมดัลสำหรับแสดงภาพ -->
+                        <p class="mb-0">ราคา: ฿<?php echo number_format($detail['price'], 2); ?> - ยอดรวม: ฿<?php echo number_format($detail['quantity'] * $detail['price'], 2); ?></p>
+                    </li>
+                <?php endwhile; ?>
+            </ul>
+        </section>
+    </main>
+
+    <!-- โมดัลสำหรับแสดงสลิป -->
     <div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -136,11 +215,10 @@ $details_result = mysqli_stmt_get_result($stmt);
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        // JavaScript สำหรับการเปิดโมดัล
         var modal = document.getElementById("myModal");
         var links = document.querySelectorAll('.view-payment-slip');
-        
         links.forEach(function(link) {
             link.onclick = function(event) {
                 event.preventDefault();
@@ -156,7 +234,6 @@ $details_result = mysqli_stmt_get_result($stmt);
 </html>
 
 <?php
-// ปิดการเชื่อมต่อฐานข้อมูล
 mysqli_close($conn);
 include 'footer.php';
 ?>

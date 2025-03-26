@@ -1,5 +1,4 @@
 <?php
-
 include 'topnavbar.php';
 include 'connectDB.php';
 
