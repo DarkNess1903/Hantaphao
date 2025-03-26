@@ -88,7 +88,6 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
 
 </style>
 <body>
-<header>
     <nav class="navbar navbar-expand-md bg-white">
         <div class="container-fluid">
             <a href="index.php" class="navbar-brand d-flex align-items-center">
@@ -150,7 +149,7 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
             
         </div>
     </nav>
-</header>
+
 
 <!-- Modal สำหรับยืนยันการออกจากระบบ -->
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
