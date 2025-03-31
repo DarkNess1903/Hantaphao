@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'connectDB.php';
+include 'topnavbar.php';
 
 // ตรวจสอบการเข้าสู่ระบบ
 if (!isset($_SESSION['customer_id'])) {
@@ -65,17 +66,12 @@ if ($cart) {
     <title>ตะกร้าสินค้า</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <?php
-    include 'topnavbar.php';
-    ?>
-    
     <header class="bg-dark text-white text-center py-3">
         <h1>ตะกร้าสินค้าของคุณ</h1>
     </header>
@@ -83,60 +79,55 @@ if ($cart) {
         <section class="cart">
             <h2>รายการสินค้าในตะกร้า</h2>
             <?php if ($cart): ?>
-                <table class="table table-striped">
-                    <thead>
+                <div class="table-responsive"> <!-- ทำให้ตารางเลื่อนข้างได้บนมือถือ -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>รูปภาพ</th>
+                                <th>สินค้า</th>
+                                <th>จำนวน</th>
+                                <th>ราคา</th>
+                                <th>รวมทั้งหมด</th>
+                                <th>สต็อก</th>
+                                <th>การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php while ($item = mysqli_fetch_assoc($items_result)): ?>
                         <tr>
-                            <th>รูปภาพ</th>
-                            <th>สินค้า</th>
-                            <th>จำนวน</th> <!-- แก้ไขหัวข้อที่นี่ -->
-                            <th>ราคา</th>
-                            <th>รวมทั้งหมด</th>
-                            <th>สต็อก</th>
-                            <th>การจัดการ</th>
+                            <td>
+                                <img src="./Admin/product/<?php echo htmlspecialchars($item['image'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                    alt="<?php echo htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                    width="100" class="img-fluid"> <!-- ใช้ img-fluid เพื่อให้รูปปรับขนาดตามอุปกรณ์ -->
+                            </td>
+                            <td><?php echo htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td>
+                                <form action="update_cart.php" method="post" class="d-flex align-items-center">
+                                    <input type="hidden" name="cart_item_id" value="<?php echo htmlspecialchars($item['cart_item_id'], ENT_QUOTES, 'UTF-8'); ?>">
+                                    <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary">-</button>
+                                    <input type="text" name="quantity" 
+                                        value="<?php echo number_format($item['quantity'], 0); ?>" 
+                                        class="form-control mx-2" style="width: 80px; text-align: center;" readonly>
+                                    <button type="submit" name="action" value="increase" class="btn btn-outline-secondary">+</button>
+                                </form>
+                            </td>
+                            <td>
+                                <?php echo number_format($item['price'], 2); ?>
+                            </td>
+                            <td>
+                                <?php echo number_format(($item['price'] * $item['quantity']), 2); ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($item['stock_quantity'], ENT_QUOTES, 'UTF-8'); ?></td> 
+                            <td>
+                                <a href="remove_from_cart.php?cart_item_id=<?php echo htmlspecialchars($item['cart_item_id'], ENT_QUOTES, 'UTF-8'); ?>" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?')">
+                                    <i class="fas fa-trash-alt" title="ลบ"></i>
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                    <?php while ($item = mysqli_fetch_assoc($items_result)): ?>
-    <tr>
-        <td>
-            <img src="./Admin/product/<?php echo htmlspecialchars($item['image'], ENT_QUOTES, 'UTF-8'); ?>" 
-                alt="<?php echo htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?>" 
-                width="100">
-        </td>
-        <td><?php echo htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-        <td>
-            <form action="update_cart.php" method="post" class="d-flex align-items-center">
-                <input type="hidden" name="cart_item_id" value="<?php echo htmlspecialchars($item['cart_item_id'], ENT_QUOTES, 'UTF-8'); ?>">
-                <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary">-</button>
-                <input type="text" name="quantity" 
-                    value="<?php echo number_format($item['quantity'], 0); ?>" 
-                    class="form-control mx-2" style="width: 80px; text-align: center;" readonly>
-                <button type="submit" name="action" value="increase" class="btn btn-outline-secondary">+</button>
-            </form>
-        </td>
-        <td>
-            <?php
-            // แสดงราคาให้ถูกต้อง
-            echo number_format($item['price'], 2); // แสดงราคาเป็นชิ้น
-            ?>
-        </td>
-        <td>
-            <?php
-            // คำนวณยอดรวมที่ถูกต้อง
-            echo number_format(($item['price'] * $item['quantity']), 2); // คำนวณยอดรวมจากราคา * จำนวน
-            ?>
-        </td>
-        <td><?php echo htmlspecialchars($item['stock_quantity'], ENT_QUOTES, 'UTF-8'); ?></td> 
-        <td>
-            <a href="remove_from_cart.php?cart_item_id=<?php echo htmlspecialchars($item['cart_item_id'], ENT_QUOTES, 'UTF-8'); ?>" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?')">
-                <i class="fas fa-trash-alt" title="ลบ"></i>
-            </a>
-        </td>
-    </tr>
-<?php endwhile; ?>
-
-                    </tbody>
-                </table>
+                        <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
                 <p><strong>รวมทั้งหมด: <?php echo number_format($grand_total, 2); ?></strong></p>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
                     ชำระเงิน

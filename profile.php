@@ -68,14 +68,17 @@ $profile = mysqli_fetch_assoc($profile_result);
 
         /* Header */
         header {
-        color: white;
-        text-align: center;
-        padding: 2rem 0;
+            
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         header h1 {
-            font-family: 'Prompt', sans-serif;
             font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin: 0;
         }
 
         /* Main Container */
@@ -234,7 +237,7 @@ $profile = mysqli_fetch_assoc($profile_result);
         }
     </style>
 <body>
-    <header class="bg-dark text-white text-center py-3">
+    <header>
         <h1>โปรไฟล์</h1>
     </header>
 

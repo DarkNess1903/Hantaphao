@@ -43,15 +43,19 @@ $no_order = mysqli_num_rows($order_result) === 0;
         background-color: #f8f9fa;
     }
 
+    /* Header */
     header {
+        
         color: white;
         text-align: center;
         padding: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     header h1 {
-        font-family: 'Prompt', sans-serif;
         font-size: 2.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin: 0;
     }
 
     .table {

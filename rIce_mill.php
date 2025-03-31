@@ -36,14 +36,6 @@ include 'connectDB.php';
             height: 100%;
         }
 
-        /* Force navbar to stick to top */
-        .navbar {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100%;
-            position: relative; /* หรือใช้ fixed ถ้าต้องการให้ติดแน่น */
-        }
-
         /* Ensure banner starts right after navbar */
         .banner {
             background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
