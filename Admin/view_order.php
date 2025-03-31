@@ -306,8 +306,8 @@ $conn->close();
             }
         });
 
+        // อัปเดตสถานะการตรวจสอบสลิป
         $('#verifySlipBtn').on('click', function() {
-            // แสดงกล่องยืนยัน
             if (confirm('คุณแน่ใจหรือไม่ว่าตรวจสอบสลิปแล้ว?')) {
                 $.ajax({
                     url: 'update_order_status.php',
@@ -357,6 +357,45 @@ $conn->close();
                 },
                 error: function() {
                     alert('เกิดข้อผิดพลาดในการติดต่อเซิร์ฟเวอร์');
+                }
+            });
+        });
+        
+        $(document).ready(function() {
+            // ปุ่มอัปเดตสถานะการจัดส่ง
+            $('#updateShippingBtn').on('click', function() {
+                // ขอให้ผู้ใช้ยืนยันก่อนทำการอัปเดต
+                var trackingNumber = $('#trackingNumber').val().trim();
+
+                if (trackingNumber === '') {
+                    alert('กรุณากรอกหมายเลขติดตามการจัดส่ง');
+                    return;
+                }
+
+                // กล่องยืนยันก่อนการอัปเดต
+                var isConfirmed = confirm('คุณแน่ใจหรือไม่ว่าต้องการอัปเดตสถานะการจัดส่ง?');
+                
+                if (isConfirmed) {
+                    // หากผู้ใช้กดยืนยัน, ส่งคำขอ AJAX เพื่ออัปเดตสถานะการจัดส่ง
+                    $.ajax({
+                        url: 'update_shipping_status.php',
+                        method: 'POST',
+                        data: { order_id: <?php echo $order_id; ?>, tracking_number: trackingNumber },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                $('#shippingMessage').text('สถานะการจัดส่งได้รับการอัปเดตเรียบร้อยแล้ว').show();
+                                setTimeout(function() {
+                                    location.reload(); // รีเฟรชหน้า
+                                }, 1000);
+                            } else {
+                                alert('เกิดข้อผิดพลาด: ' + response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('เกิดข้อผิดพลาดในการติดต่อเซิร์ฟเวอร์');
+                        }
+                    });
                 }
             });
         });

@@ -18,9 +18,16 @@ if ($order_id <= 0) {
 
 // ดึงข้อมูลคำสั่งซื้อ (รวม address และ shipping_fee)
 $order_query = "
-    SELECT order_id, customer_id, order_date, total_amount, payment_slip, status, tracking_number, address, shipping_fee
+    SELECT orders.order_id, orders.customer_id, orders.order_date, orders.total_amount, orders.payment_slip, 
+           orders.status, orders.tracking_number, orders.address, orders.shipping_fee,
+           COALESCE(amphur.AMPHUR_NAME, 'ไม่ระบุ') AS amphurName, 
+           COALESCE(province.PROVINCE_NAME, 'ไม่ระบุ') AS provinceName
     FROM orders
-    WHERE order_id = ? AND customer_id = ?";
+    LEFT JOIN customer ON orders.customer_id = customer.customer_id
+    LEFT JOIN amphur ON customer.amphur_id = amphur.AMPHUR_ID
+    LEFT JOIN province ON customer.province_id = province.PROVINCE_ID
+    WHERE orders.order_id = ? AND orders.customer_id = ?";
+
 $stmt = mysqli_prepare($conn, $order_query);
 mysqli_stmt_bind_param($stmt, 'ii', $order_id, $customer_id);
 mysqli_stmt_execute($stmt);
@@ -166,6 +173,8 @@ $details_result = mysqli_stmt_get_result($stmt);
                 <p><strong>ค่าจัดส่ง:</strong> ฿<?php echo number_format($order['shipping_fee'], 2); ?></p>
                 <p><strong>ยอดรวมทั้งหมด:</strong> ฿<?php echo number_format($order['total_amount'], 2); ?></p>
                 <p><strong>ที่อยู่จัดส่ง:</strong> <?php echo htmlspecialchars($order['address']); ?></p>
+                <p><strong>อำเภอ: </strong><?php echo htmlspecialchars($order['amphurName']); ?></p>
+                <p><strong>จังหวัด: </strong><?php echo htmlspecialchars($order['provinceName']); ?></p>
                 <?php
                 $payment_slip = $order['payment_slip'] ?? '';
                 $image_path = "./Admin/uploads/" . htmlspecialchars(basename($payment_slip));

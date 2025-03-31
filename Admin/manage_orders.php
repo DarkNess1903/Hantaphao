@@ -83,9 +83,9 @@ if (!$result) {
 
     <div class="container mt-5">
         <h1 class="text-center mb-4">จัดการคำสั่งซื้อ</h1>
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
                     <tr>
                         <th>เลขคำสั่งซื้อ</th>
                         <th>ชื่อผู้สั่งซื้อ</th>
