@@ -36,13 +36,26 @@ $no_order = mysqli_num_rows($order_result) === 0;
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <style>
     body {
-        background-color: #f7f9f8;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0; /* ลบ margin default ของ body */
+        font-family: 'Sarabun', sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
     }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Prompt', sans-serif;
+        font-weight: 700;
+    }
+
+    .btn {
+        font-family: 'Prompt', sans-serif;
+        font-weight: 500;
+    }
+
     /* Header */
     header {
         
