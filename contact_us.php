@@ -18,72 +18,161 @@ include 'topnavbar.php';
     <link rel="stylesheet" href="css/style.css">
 </head>
 <style>
+    /* กำหนดขนาดตัวอักษรพื้นฐาน */
+    html {
+        font-size: 16px; /* 1 rem = 16px */
+    }
+
     body {
-    font-family: 'Sarabun', sans-serif;
-    font-weight: 400;
-    line-height: 1.6;
-}
+        font-family: 'Sarabun', sans-serif;
+        font-size: 1rem; /* ขนาดพื้นฐาน */
+        line-height: 1.6; /* เพิ่มระยะห่างระหว่างบรรทัด */
+        color: #333; /* สีตัวอักษร */
+    }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Prompt', sans-serif;
-    font-weight: 700;
-}
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Prompt', sans-serif;
+        font-weight: 700;
+        margin-bottom: 0.5rem; /* เว้นระยะระหว่างหัวข้อ */
+    }
 
-.btn {
-    font-family: 'Prompt', sans-serif;
-    font-weight: 500;
-    
-}
+    h1 {
+        font-size: 2.5rem; /* หัวข้อใหญ่สุด */
+    }
 
-.carousel-caption h5, .carousel-caption p {
-    font-family: 'Prompt', sans-serif;
-}
+    h2 {
+        font-size: 2rem;
+    }
 
-/* CSS เดิม */
-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    h3 {
+        font-size: 1.75rem;
+    }
 
-.btn-success {
-    transition: transform 0.3s, background-color 0.3s;
-}
+    h4 {
+        font-size: 1.5rem;
+    }
 
-.btn-success:hover {
-    transform: scale(1.05);
-    background-color: #218838;
-}
+    h5 {
+        font-size: 1.25rem;
+    }
 
-.card {
-    transition: transform 0.3s;
-}
+    h6 {
+        font-size: 1.1rem;
+    }
 
-.card:hover {
-    transform: translateY(-5px);
-}
+    p, li {
+        font-size: 1rem; /* ขนาดตัวอักษรปกติ */
+    }
 
-.card-img-top {
-    height: 200px;
-    object-fit: cover;
-}
+    a, .btn {
+        font-size: 1rem; /* ปรับขนาดตัวอักษรของลิงค์และปุ่ม */
+    }
 
-.carousel-item img {
-    height: 400px;
-    object-fit: cover;
-}
+    .carousel-caption h5 {
+        font-size: 1.75rem; /* ขนาดตัวอักษรของข้อความใน carousel */
+    }
 
-.carousel-caption {
-    padding: 10px;
-}
+    .carousel-caption p {
+        font-size: 1.25rem;
+    }
 
-section {
-    line-height: 1.6;
-}
+    /* สำหรับ responsive */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2rem; /* ขนาดหัวข้อสำหรับหน้าจอเล็ก */
+        }
 
-.text-success {
-    color: #28a745 !important;
-}
+        h2 {
+            font-size: 1.75rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        p, li {
+            font-size: 0.95rem; /* ขนาดตัวอักษรปกติในหน้าจอเล็ก */
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.5rem; /* ขนาดหัวข้อสำหรับหน้าจอเล็กที่สุด */
+        }
+
+        h2 {
+            font-size: 1.25rem;
+        }
+
+        p, li {
+            font-size: 0.9rem;
+        }
+    }
+
+    body {
+        font-family: 'Sarabun', sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Prompt', sans-serif;
+        font-weight: 700;
+    }
+
+    .btn {
+        font-family: 'Prompt', sans-serif;
+        font-weight: 500;
+    }
+
+    .carousel-caption h5, .carousel-caption p {
+        font-family: 'Prompt', sans-serif;
+    }
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-success {
+        transition: transform 0.3s, background-color 0.3s;
+    }
+
+    .btn-success:hover {
+        transform: scale(1.05);
+        background-color: #218838;
+    }
+
+    .card {
+        transition: transform 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .carousel-item img {
+        height: 400px;
+        object-fit: cover;
+    }
+
+    .carousel-caption {
+        padding: 10px;
+    }
+
+    section {
+        line-height: 1.6;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
 </style>
 <body>
     <!-- Modern Header with Green Theme -->
