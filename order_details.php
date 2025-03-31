@@ -27,7 +27,6 @@ $order_query = "
     LEFT JOIN amphur ON customer.amphur_id = amphur.AMPHUR_ID
     LEFT JOIN province ON customer.province_id = province.PROVINCE_ID
     WHERE orders.order_id = ? AND orders.customer_id = ?";
-
 $stmt = mysqli_prepare($conn, $order_query);
 mysqli_stmt_bind_param($stmt, 'ii', $order_id, $customer_id);
 mysqli_stmt_execute($stmt);
@@ -51,17 +50,18 @@ mysqli_stmt_execute($stmt);
 $details_result = mysqli_stmt_get_result($stmt);
 ?>
 
-<!DOCTYPE html>
-<html lang="th">
 <head>
+    <title>รายละเอียดคำสั่งซื้อ</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายละเอียดคำสั่งซื้อ - Meat Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<style>
         :root {
+            /* ลบตัวแปรสีที่ไม่ใช้ */
             --green-dark: #2a6041;
             --green-medium: #5da271;
             --green-light: #eef7f1;
@@ -75,18 +75,15 @@ $details_result = mysqli_stmt_get_result($stmt);
             margin: 0;
         }
 
-        /* Header */
         header {
-            background: #212529!important;
-            color: white;
-            padding: 0.75rem 0; /* ลดความสูง header อีกจาก 1rem */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            margin-top: -15px; /* ลดระยะห่างจากขอบบน */
+        color: white;
+        text-align: center;
+        padding: 2rem 0;
         }
+
         header h1 {
+            font-family: 'Prompt', sans-serif;
             font-size: 2.5rem;
-            margin: 0;
-            padding-bottom:15px ;
         }
 
         .order-details {
@@ -99,45 +96,42 @@ $details_result = mysqli_stmt_get_result($stmt);
         }
 
         h2, h3 {
-            color: var(--green-dark);
+            color: #2a6041;  /* ใช้สีแบบตรงๆ แทนการใช้ตัวแปร */
             font-weight: 600;
         }
 
         .order-info {
-            background: var(--green-light);
-            border: 1px solid var(--green-accent);
+            background: #eef7f1; /* ใช้สีตรงๆ */
+            border: 1px solid #b8e0c3;
             border-radius: 10px;
             padding: 1.25rem;
             margin-bottom: 1.5rem;
         }
+
         .order-info p {
             margin: 0.5rem 0;
             color: #444;
         }
+
         .order-info a {
-            color: var(--green-medium);
+            color: #5da271; /* ใช้สีตรงๆ */
             text-decoration: none;
         }
+
         .order-info a:hover {
             text-decoration: underline;
         }
 
         .list-group-item {
-            background: var(--green-light);
-            border: 1px solid var(--green-accent);
+            background: #eef7f1; /* ใช้สีตรงๆ */
+            border: 1px solid #b8e0c3;
             margin-bottom: 0.5rem;
             border-radius: 8px;
         }
+
         .list-group-item img {
             border-radius: 5px;
             object-fit: cover;
-        }
-
-        .modal-content {
-            border-radius: 10px;
-        }
-        .modal-img {
-            border-radius: 5px;
         }
 
         @media (max-width: 768px) {
@@ -156,9 +150,7 @@ $details_result = mysqli_stmt_get_result($stmt);
             }
         }
     </style>
-</head>
 <body>
-    <?php include 'topnavbar.php'; ?>
 
     <header class="text-center">
         <h1>รายละเอียดคำสั่งซื้อ</h1>
@@ -178,7 +170,7 @@ $details_result = mysqli_stmt_get_result($stmt);
                 <?php
                 $payment_slip = $order['payment_slip'] ?? '';
                 $image_path = "./Admin/uploads/" . htmlspecialchars(basename($payment_slip));
-                $image_url = file_exists($image_path) && is_readable($image_path) ? $image_path : "./Admin/uploads/default-slip.jpg"; // รูป default ถ้าไม่มี
+                $image_url = file_exists($image_path) && is_readable($image_path) ? $image_path : "./Admin/uploads/default-slip.jpg"; 
                 ?>
                 <p><strong>สลิปการชำระเงิน:</strong>
                     <a href="#" class="view-payment-slip" data-image="<?php echo htmlspecialchars($image_url, ENT_QUOTES, 'UTF-8'); ?>">
@@ -209,7 +201,6 @@ $details_result = mysqli_stmt_get_result($stmt);
         </section>
     </main>
 
-    <!-- โมดัลสำหรับแสดงสลิป -->
     <div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

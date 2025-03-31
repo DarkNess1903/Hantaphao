@@ -11,7 +11,9 @@ if (isset($_POST['id'])) {
     if (mysqli_num_rows($result) > 0) {
         echo '<option value="">เลือกตำบล</option>'; // Option for default selection
         while ($row = mysqli_fetch_assoc($result)) {
-            echo "<option value=\"{$row['DISTRICT_ID']}\">{$row['DISTRICT_NAME']}</option>";
+            // หากตำบลมีการเลือกไว้ก่อนหน้าให้ทำการเลือก
+            $selected = (isset($_POST['district_id']) && $_POST['district_id'] == $row['DISTRICT_ID']) ? 'selected' : '';
+            echo "<option value=\"{$row['DISTRICT_ID']}\" $selected>{$row['DISTRICT_NAME']}</option>";
         }
     } else {
         echo '<option value="">ไม่สามารถดึงข้อมูลตำบลได้</option>';

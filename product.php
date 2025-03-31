@@ -7,8 +7,7 @@ include 'topnavbar.php';
 $selected_category = isset($_GET['category']) ? intval($_GET['category']) : 0;
 ?>
 
-<!DOCTYPE html>
-<html lang="th">
+
 <head>
     <title>สินค้า</title>
     <meta charset="UTF-8">

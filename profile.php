@@ -19,9 +19,10 @@ $profile_query = "
     FROM customer c 
     JOIN province p ON c.province_id = p.PROVINCE_ID 
     JOIN amphur a ON c.amphur_id = a.AMPHUR_ID 
-    JOIN district d ON a.AMPHUR_ID = d.AMPHUR_ID  -- แก้ไขตามความสัมพันธ์ตาราง
+    LEFT JOIN district d ON c.district_id = d.DISTRICT_ID  -- ใช้ LEFT JOIN แทน
     WHERE c.customer_id = ?
 ";
+
 $stmt = mysqli_prepare($conn, $profile_query);
 mysqli_stmt_bind_param($stmt, 'i', $customer_id);
 mysqli_stmt_execute($stmt);
@@ -40,11 +41,10 @@ $profile = mysqli_fetch_assoc($profile_result);
     <title>โปรไฟล์</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <style>
         body {
@@ -68,17 +68,14 @@ $profile = mysqli_fetch_assoc($profile_result);
 
         /* Header */
         header {
-            
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        color: white;
+        text-align: center;
+        padding: 2rem 0;
         }
 
         header h1 {
+            font-family: 'Prompt', sans-serif;
             font-size: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin: 0;
         }
 
         /* Main Container */
@@ -273,140 +270,171 @@ $profile = mysqli_fetch_assoc($profile_result);
             <p><strong>อำเภอ:</strong> <?php echo htmlspecialchars($profile['amphur_name'], ENT_QUOTES, 'UTF-8'); ?></p>
             <p><strong>ตำบล/เขต:</strong> <?php echo htmlspecialchars($profile['district_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?></p>
             <p><strong>รหัสไปรษณีย์:</strong> <?php echo htmlspecialchars($profile['postcode'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?></p>
-           <button id="editBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">แก้ไขโปรไฟล์</button>
+            <button id="editBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">แก้ไขโปรไฟล์</button>
         </section>
     </main>
+
     <?php include 'footer.php'; ?>
 
     <!-- Modal สำหรับฟอร์มแก้ไขข้อมูล -->
-        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">แก้ไขโปรไฟล์</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editProfileForm" action="update_profile.php" method="POST">
-                            <!-- ส่ง customer_id เพื่อใช้ในการอัปเดต -->
-                            <input type="hidden" name="customer_id" value="<?php echo htmlspecialchars($customer_id, ENT_QUOTES, 'UTF-8'); ?>">
-                            
-                            <!-- ชื่อ -->
-                            <div class="mb-3">
-                                <label for="name" class="form-label">ชื่อ:</label>
-                                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($profile['name'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control" required>
-                            </div>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">แก้ไขโปรไฟล์</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm" action="update_profile.php" method="POST">
+                        <!-- ส่ง customer_id เพื่อใช้ในการอัปเดต -->
+                        <input type="hidden" name="customer_id" value="<?php echo htmlspecialchars($customer_id, ENT_QUOTES, 'UTF-8'); ?>">
+                        
+                        <!-- ชื่อ -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">ชื่อ:</label>
+                            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($profile['name'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control" required>
+                        </div>
 
-                            <!-- เบอร์โทรศัพท์ -->
-                            <div class="mb-3">
-                                <label for="phone" class="form-label">เบอร์โทรศัพท์:</label>
-                                <input type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($profile['phone'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control" required>
-                            </div>
+                        <!-- เบอร์โทรศัพท์ -->
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">เบอร์โทรศัพท์:</label>
+                            <input type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($profile['phone'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control" required>
+                        </div>
 
-                            <!-- ที่อยู่ -->
-                            <div class="mb-3">
-                                <label for="address" class="form-label">ที่อยู่:</label>
-                                <textarea id="address" name="address" rows="4" class="form-control" required><?php echo htmlspecialchars($profile['address'], ENT_QUOTES, 'UTF-8'); ?></textarea>
-                            </div>
+                        <!-- ที่อยู่ -->
+                        <div class="mb-3">
+                            <label for="address" class="form-label">ที่อยู่:</label>
+                            <textarea id="address" name="address" rows="4" class="form-control" required><?php echo htmlspecialchars($profile['address'], ENT_QUOTES, 'UTF-8'); ?></textarea>
+                        </div>
 
-                            <!-- จังหวัด -->
-                            <div class="mb-3">
-                                <label for="province_id" class="form-label">จังหวัด:</label>
-                                <select id="province_id" name="province_id" class="form-control" required>
-                                    <option value="">เลือกจังหวัด</option>
-                                    <?php
-                                    $province_query = "SELECT PROVINCE_ID, PROVINCE_NAME FROM province";
-                                    $province_result = mysqli_query($conn, $province_query);
-                                    while ($province = mysqli_fetch_assoc($province_result)) {
-                                        echo '<option value="' . $province['PROVINCE_ID'] . '">' . $province['PROVINCE_NAME'] . '</option>';
+                        <!-- จังหวัด -->
+                        <div class="mb-3">
+                            <label for="province_id" class="form-label">จังหวัด:</label>
+                            <select id="province_id" name="province_id" class="form-control" required>
+                                <option value="">เลือกจังหวัด</option>
+                                <?php
+                                $province_query = "SELECT PROVINCE_ID, PROVINCE_NAME FROM province";
+                                $province_result = mysqli_query($conn, $province_query);
+                                while ($province = mysqli_fetch_assoc($province_result)) {
+                                    $selected = ($province['PROVINCE_ID'] == $profile['province_id']) ? 'selected' : '';
+                                    echo '<option value="' . $province['PROVINCE_ID'] . '" ' . $selected . '>' . $province['PROVINCE_NAME'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <!-- อำเภอ -->
+                        <div class="mb-3">
+                            <label for="amphur_id" class="form-label">อำเภอ:</label>
+                            <select id="amphur_id" name="amphur_id" class="form-control" required>
+                                <option value="">เลือกอำเภอ</option>
+                                <?php
+                                // ตรวจสอบว่าอำเภอมีค่าหรือไม่
+                                if (isset($profile['amphur_id'])) {
+                                    $amphur_query = "SELECT AMPHUR_ID, AMPHUR_NAME FROM amphur WHERE PROVINCE_ID = {$profile['province_id']}";
+                                    $amphur_result = mysqli_query($conn, $amphur_query);
+                                    while ($amphur = mysqli_fetch_assoc($amphur_result)) {
+                                        $selected = ($amphur['AMPHUR_ID'] == $profile['amphur_id']) ? 'selected' : '';
+                                        echo '<option value="' . $amphur['AMPHUR_ID'] . '" ' . $selected . '>' . $amphur['AMPHUR_NAME'] . '</option>';
                                     }
-                                    ?>
-                                </select>
-                            </div>
+                                }
+                                ?>
+                            </select>
+                        </div>
 
-                            <!-- อำเภอ -->
-                            <div class="mb-3">
-                                <label for="amphur_id" class="form-label">อำเภอ:</label>
-                                <select id="amphur_id" name="amphur_id" class="form-control" required>
-                                    <option value="">เลือกอำเภอ</option>
-                                </select>
-                            </div>
+                        <!-- ตำบล/เขต -->
+                        <div class="mb-3">
+                            <label for="district_id" class="form-label">ตำบล/เขต:</label>
+                            <select id="district_id" name="district_id" class="form-control" required>
+                                <option value="">เลือกตำบล/เขต</option>
+                                <?php
+                                // ตรวจสอบว่าเขตมีค่าหรือไม่
+                                if (isset($profile['district_id'])) {
+                                    $district_query = "SELECT DISTRICT_ID, DISTRICT_NAME FROM district WHERE AMPHUR_ID = {$profile['amphur_id']}";
+                                    $district_result = mysqli_query($conn, $district_query);
+                                    while ($district = mysqli_fetch_assoc($district_result)) {
+                                        $selected = ($district['DISTRICT_ID'] == $profile['district_id']) ? 'selected' : '';
+                                        echo '<option value="' . $district['DISTRICT_ID'] . '" ' . $selected . '>' . $district['DISTRICT_NAME'] . '</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
 
-                            <!-- ตำบล/เขต -->
-                            <div class="mb-3">
-                                <label for="district_id" class="form-label">ตำบล/เขต:</label>
-                                <select id="district_id" name="district_id" class="form-control" required>
-                                    <option value="">เลือกตำบล/เขต</option>
-                                </select>
-                            </div>
+                        <!-- รหัสไปรษณีย์ -->
+                        <div class="mb-3">
+                            <label for="postcode" class="form-label">รหัสไปรษณีย์:</label>
+                            <input type="text" id="postcode" name="postcode" value="<?php echo htmlspecialchars($profile['postcode'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control" readonly>
+                        </div>
 
-                            <!-- รหัสไปรษณีย์ -->
-                            <div class="mb-3">
-                                <label for="postcode" class="form-label">รหัสไปรษณีย์:</label>
-                                <input type="text" id="postcode" name="postcode" class="form-control" readonly>
-                            </div>
-
-                            <button type="submit" class="btn btn-success">บันทึกการเปลี่ยนแปลง</button>
-                        </form>
-                    </div>
+                        <button type="submit" class="btn btn-success">บันทึกการเปลี่ยนแปลง</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#province_id').change(function() {
-            var id_province = $(this).val();
-            $.ajax({
-                type: "POST",
-                url: "select_Amphur.php",
-                data: {id: id_province},
-                success: function(data) {
-                    $('#amphur_id').html(data);
-                    $('#district_id').html('<option value="">เลือกตำบล</option>');
-                    $('#postcode').val(''); // Reset postcode
-                },
-                error: function() {
-                    $('#amphur_id').html('<option value="">ไม่สามารถดึงข้อมูลอำเภอได้</option>');
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#province_id').change(function() {
+                var id_province = $(this).val(); // รับค่าจังหวัดที่เลือก
+                
+                // เช็คว่ามีการเลือกจังหวัดไหม
+                if(id_province) {
+                    $.ajax({
+                        type: "POST",
+                        url: "select_Amphur.php", // ไฟล์ PHP สำหรับดึงข้อมูลอำเภอ
+                        data: { id: id_province },
+                        success: function(data) {
+                            $('#amphur_id').html(data); // ใส่ข้อมูลอำเภอที่ดึงมาจาก PHP
+                            $('#district_id').html('<option value="">เลือกตำบล</option>'); // ล้างตำบลก่อน
+                            $('#postcode').val(''); // ล้างรหัสไปรษณีย์
+                        },
+                        error: function() {
+                            $('#amphur_id').html('<option value="">ไม่สามารถดึงข้อมูลอำเภอได้</option>');
+                        }
+                    });
+                } else {
+                    $('#amphur_id').html('<option value="">เลือกอำเภอ/เขต</option>');
                 }
             });
-        });
 
-        $('#amphur_id').change(function() {
-            var id_amphur = $(this).val();
-            $.ajax({
-                type: "POST",
-                url: "select_Tambol.php",
-                data: {id: id_amphur},
-                success: function(data) {
-                    $('#district_id').html(data);
-                    $('#postcode').val(''); // Reset postcode
-                },
-                error: function() {
-                    $('#district_id').html('<option value="">ไม่สามารถดึงข้อมูลตำบลได้</option>');
-                }
+            // เมื่อเลือกอำเภอ
+            $('#amphur_id').change(function() {
+                var id_amphur = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "select_Tambol.php",
+                    data: {id: id_amphur, district_id: '<?php echo htmlspecialchars($profile['district_id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>'}, // ส่ง district_id ที่เลือก
+                    success: function(data) {
+                        $('#district_id').html(data);
+                        $('#postcode').val(''); // Reset postcode
+                    },
+                    error: function() {
+                        $('#district_id').html('<option value="">ไม่สามารถดึงข้อมูลตำบลได้</option>');
+                    }
+                });
+            });
+
+            // เมื่อเลือกตำบล
+            $('#district_id').change(function() {
+                var id_district = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "get_zip_code.php",
+                    data: { id: id_district },
+                    success: function(data) {
+                        $('#postcode').val(data); // Update to correct postcode field ID
+                    },
+                    error: function() {
+                        $('#postcode').val(''); // Reset postcode on error
+                    }
+                });
             });
         });
+    </script>
 
-        $('#district_id').change(function() {
-            var id_district = $(this).val();
-            $.ajax({
-                type: "POST",
-                url: "get_zip_code.php",
-                data: { id: id_district },
-                success: function(data) {
-                    console.log(data);
-                    $('#postcode').val(data); // Update to correct postcode field ID
-                },
-                error: function() {
-                    console.log('Error in AJAX request');
-                    $('#postcode').val(''); // Reset postcode on error
-                }
-            });
-        });
-    });
-</script>
     <?php mysqli_close($conn); ?>
 </body>
 </html>
