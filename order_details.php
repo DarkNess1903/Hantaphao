@@ -68,11 +68,24 @@ $details_result = mysqli_stmt_get_result($stmt);
             --green-accent: #b8e0c3;
             --black: #1c2526;
         }
-
+        
         body {
-            background-color: #f7f9f8;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Sarabun', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            background-color: #f8f9fa;
             margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Prompt', sans-serif;
+            font-weight: 700;
+        }
+
+        .btn {
+            font-family: 'Prompt', sans-serif;
+            font-weight: 500;
         }
 
         /* Header */
