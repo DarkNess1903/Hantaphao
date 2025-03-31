@@ -1,7 +1,10 @@
 <?php
 session_start();
-include 'connectDB.php'
+include 'connectDB.php';
 ?>
+
+<!DOCTYPE html>
+<html lang="th">
 <head>
     <title>โครงการเทคโนโลยีเพื่อชุมชน</title>
     <meta charset="UTF-8">
@@ -10,31 +13,53 @@ include 'connectDB.php'
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="css/style.css">
-  <?php
-include 'topnavbar.php'
-?>
-<html lang="th">
+
     <style>
+        /* Reset all elements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f1f8e9; /* Light green background */
-            margin: 0;
+            background-color: #f1f8e9;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100%;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Prompt', sans-serif;
-            font-weight: 700;
-            color: #2e7d32; /* Dark green for headings */
+        html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100%;
         }
 
-        /* Banner */
+        /* Force navbar to stick to top */
+        .navbar {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100%;
+            position: relative; /* หรือใช้ fixed ถ้าต้องการให้ติดแน่น */
+        }
+
+        /* Ensure banner starts right after navbar */
         .banner {
-            background: linear-gradient(135deg, #4caf50 0%, #81c784 100%); /* Green gradient */
+            background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
             color: white;
             padding: 4rem 0;
             text-align: center;
             position: relative;
             overflow: hidden;
+            margin-top: 0 !important; /* บังคับให้ไม่มี margin */
+            top: 0; /* เริ่มจากขอบบน */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Prompt', sans-serif;
+            font-weight: 700;
+            color: #2e7d32;
         }
 
         .banner h1 {
@@ -69,7 +94,7 @@ include 'topnavbar.php'
         }
 
         .section-title {
-            background-color: #81c784; /* Medium green */
+            background-color: #81c784;
             color: white;
             padding: 1rem;
             border-radius: 0.5rem;
@@ -84,7 +109,7 @@ include 'topnavbar.php'
 
         /* Card Styling for Before/After */
         .info-card {
-            background-color: #e8f5e9; /* Very light green */
+            background-color: #e8f5e9;
             border: none;
             border-radius: 0.75rem;
             padding: 1.5rem;
@@ -98,7 +123,7 @@ include 'topnavbar.php'
         }
 
         .info-card h4 {
-            color: #388e3c; /* Slightly darker green */
+            color: #388e3c;
             margin-bottom: 1rem;
         }
 
@@ -144,7 +169,7 @@ include 'topnavbar.php'
 
         /* Highlight Box */
         .highlight-box {
-            background-color: #c8e6c9; /* Light green */
+            background-color: #c8e6c9;
             padding: 1rem;
             border-radius: 0.5rem;
             margin-top: 1rem;
@@ -180,9 +205,7 @@ include 'topnavbar.php'
 </head>
 
 <body>
-
-<!DOCTYPE html>
-    <!-- Banner -->
+    <?php include 'topnavbar.php'; ?>
     <section class="banner">
         <div class="container">
             <h1>โครงการเทคโนโลยีเพื่อชุมชน</h1>

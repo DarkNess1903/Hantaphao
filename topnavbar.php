@@ -26,18 +26,30 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
         transition: none !important;
     }
 
+    .navbar {
+        position: sticky; /* ใช้ sticky เพื่อให้ Bootstrap จัดการระยะห่าง */
+        top: 0;
+        width: 100%;
+        z-index: 1050; /* ทำให้ Navbar อยู่เหนือทุกๆ อัน */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้ Navbar */
+        background-color: #fff; /* ตรวจสอบว่า Navbar มีสีพื้นหลัง */
+    }
+
     .navbar-nav {
         display: flex;
         justify-content: center;
         width: 100%;
         gap: 3%;
     }
+
     .nav-item {
         text-align: center;
     }
+
     .nav-item .nav-link {
         color: #000 !important;
     }
+
     .nav-item .nav-link:hover {
         color: green !important;
     }
@@ -63,7 +75,7 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
     }
 </style>
 <body>
-    <nav class="navbar navbar-expand-md bg-white">
+    <nav class="navbar navbar-expand-md bg-white sticky-top">
         <div class="container-fluid">
             <a href="index.php" class="navbar-brand d-flex align-items-center">
                 <img src="images/logo.jpg" alt="Logo" width="100" height="100" class="me-2">
@@ -102,5 +114,42 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
             </div>
         </div>
     </nav>
+
+    <!-- Modal สำหรับยืนยันการออกจากระบบ -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">ยืนยันการออกจากระบบ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <a href="logout.php" class="btn btn-danger">ออกจากระบบ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ปิดเมนูเมื่อคลิกที่ลิงก์
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(item => {
+            item.addEventListener('click', () => {
+                var navbarCollapse = document.getElementById('customNavbar');
+                if (navbarCollapse.classList.contains('show')) {
+                    navbarCollapse.classList.remove('show'); // ปิดเมนู
+                }
+            });
+        });
+
+        // ปรับ padding-top ของ body ตามความสูงของ navbar เมื่อหน้าโหลด
+        window.addEventListener('load', function() {
+            var navbarHeight = document.querySelector('.navbar').offsetHeight;
+            document.body.style.paddingTop = navbarHeight + 'px';
+        });
+    </script>
 </body>
 </html>
