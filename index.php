@@ -15,6 +15,7 @@ include 'topnavbar.php';
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favi/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favi/apple-touch-icon.png">
     <link rel="shortcut icon" href="/images/favi/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
