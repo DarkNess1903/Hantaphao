@@ -156,7 +156,7 @@ $details_result = mysqli_stmt_get_result($stmt);
     </style>
 <body>
 
-    <header class="text-center">
+    <header class="bg-dark text-white text-center py-3">
         <h1>รายละเอียดคำสั่งซื้อ</h1>
     </header>
 

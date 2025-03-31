@@ -208,7 +208,7 @@ $selected_category = isset($_GET['category']) ? intval($_GET['category']) : 0;
     </style>
 </head>
 <body>
-    <header>
+    <header class="bg-dark text-white text-center py-3">
         <h1>สินค้า</h1>
     </header>
 

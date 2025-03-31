@@ -328,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
     </style>
 </head>
 <body>
-    <header class="text-center">
+    <header class="bg-dark text-white text-center py-3">
         <h1>ยืนยันคำสั่งซื้อของคุณ</h1>
     </header>
 

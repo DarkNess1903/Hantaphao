@@ -237,7 +237,7 @@ $profile = mysqli_fetch_assoc($profile_result);
         }
     </style>
 <body>
-    <header>
+    <header class="bg-dark text-white text-center py-3">
         <h1>โปรไฟล์</h1>
     </header>
 

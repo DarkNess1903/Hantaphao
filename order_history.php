@@ -39,10 +39,10 @@ $no_order = mysqli_num_rows($order_result) === 0;
 
 <style>
     body {
-        font-family: 'Sarabun', sans-serif;
-        background-color: #f8f9fa;
+        background-color: #f7f9f8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0; /* ลบ margin default ของ body */
     }
-
     /* Header */
     header {
         
@@ -79,7 +79,7 @@ $no_order = mysqli_num_rows($order_result) === 0;
 </style>
 
 <body>
-    <header>
+    <header class="bg-dark text-white text-center py-3">
         <h1>ประวัติการสั่งซื้อ</h1>
     </header>
 
