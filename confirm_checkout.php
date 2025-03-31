@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'connectDB.php';
+include 'topnavbar.php';
 
 // ตรวจสอบว่าผู้ใช้เข้าสู่ระบบหรือไม่
 if (!isset($_SESSION['customer_id'])) {
@@ -132,11 +133,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <title>ยืนยันการสั่งซื้อ - Meat Store</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ยืนยันการสั่งซื้อ - Meat Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         /* ธีมสี */
         :root {
@@ -155,16 +158,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
 
         /* Header */
         header {
-            background: #212529!important;
+            
             color: white;
-            padding: 0.75rem 0; /* ลดความสูง header อีกจาก 1rem */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 0; /* ลดระยะห่างจากขอบบน */
+            text-align: center;
+            padding: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
+
         header h1 {
             font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             margin: 0;
-            padding-bottom:15px ;
         }
 
         /* Main Container */
@@ -324,9 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
     </style>
 </head>
 <body>
-    <?php include 'topnavbar.php'; ?>
-    
-    <header class="text-center">
+    <header class="bg-dark text-white text-center py-3">
         <h1>ยืนยันคำสั่งซื้อของคุณ</h1>
     </header>
 
