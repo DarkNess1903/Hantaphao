@@ -415,7 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['payment_slip'])) {
                     </div>
 
                     <div class="button-container">
-                        <button type="submit" class="btn btn-confirm">ยืนยันการสั่งซื้อ</button>
+                        <button type="submit" class="btn btn-success">ยืนยันการสั่งซื้อ</button>
                     </div>
                 <?php else: ?>
                     <p class="text-center text-muted">ไม่มีรายการสินค้าในตะกร้า</p>

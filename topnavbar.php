@@ -8,7 +8,8 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
     <!-- CSS Links -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
@@ -21,6 +22,12 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
     <script src="js/script.js"></script>
 </head>
 <style>
+    .navbar-nav .nav-link {
+    font-family: 'Sarabun', sans-serif; /* หรือใช้ฟอนต์ที่ต้องการ */
+    font-size: 22px; 
+    font-weight: 500; /* ปรับความหนาของตัวอักษร */
+}
+
 
     .navbar-nav {
         display: flex;
@@ -103,21 +110,10 @@ include 'connectDB.php'; // เชื่อมต่อฐานข้อมู�
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="contact_us.php">ข้อมูลชุมชน</a>
                     </li>
-
-                    <!-- เมนูเกี่ยวกับโครงการ (ทำให้แสดงเมื่อ cursor hover) -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-dark" href="#" id="projectDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            เกี่ยวกับโครงการ
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="projectDropdown">
-                            <li><a class="dropdown-item" href="rice_mill.php">โรงสีข้าว</a></li>
-                            <li><a class="dropdown-item" href="mushroom_farm.php">โรงเห็ด</a></li>
-                            <li><a class="dropdown-item" href="smokeless_kiln.php">เตาเผาไร้ควัน</a></li>
-                        </ul>
-                    </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">ข่าวสารชุมชน</a>
+                        <a class="nav-link text-dark" href="rice_mill.php">เกี่ยวกับโครงการ</a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="product.php">สินค้า</a>
                     </li>
