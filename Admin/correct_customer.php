@@ -51,7 +51,6 @@ mysqli_stmt_bind_result($stmt, $customer_id, $name, $phone, $address, $province_
             <table class="table table-bordered">
                 <thead class="thead-light">
                     <tr>
-                        <th>เลข ID</th>
                         <th>ชื่อ</th>
                         <th>เบอร์โทรศัพท์</th>
                         <th>ที่อยู่</th>
@@ -66,7 +65,6 @@ mysqli_stmt_bind_result($stmt, $customer_id, $name, $phone, $address, $province_
                 <tbody>
                     <?php while (mysqli_stmt_fetch($stmt)): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($customer_id, ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($phone, ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($address, ENT_QUOTES, 'UTF-8'); ?></td>

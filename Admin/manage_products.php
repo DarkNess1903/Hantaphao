@@ -60,31 +60,34 @@ if (isset($_POST['edit_product'])) {
     $category_id = $_POST['category_id'];
     $product_description = $_POST['product_description'];
 
-    // ตรวจสอบค่า shipping_type ที่ส่งมาจากฟอร์ม
-    if (empty($shipping_type) || !in_array($shipping_type, ['normal', 'chilled', 'frozen'])) {
-        echo "ประเภทการส่งต้องไม่ว่างและต้องเลือกประเภทที่ถูกต้อง";
+    // ตรวจสอบว่าค่า shipping_type อยู่ใน ENUM หรือไม่
+    $valid_shipping_types = ['normal', 'chilled', 'frozen'];
+
+    if (!in_array($shipping_type, $valid_shipping_types)) {
+        echo "<script>alert('ค่าการจัดส่งไม่ถูกต้อง'); window.history.back();</script>";
         exit;
     }
-    
-    // อัปเดตรูปภาพใหม่ถ้ามี
+
     if (!empty($_FILES['image']['name'])) {
         $image = $_FILES['image']['name'];
         move_uploaded_file($_FILES['image']['tmp_name'], "product/" . $image);
+
         $sql = "UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=?, image=?, category_id=?, weight=?, shipping_type=? WHERE product_id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssdissdissi', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_type, $product_id);
+        $stmt->bind_param('ssdisssdsi', $name, $price, $cost, $stock, $product_description, $image, $category_id, $weight, $shipping_type, $product_id);
     } else {
         $sql = "UPDATE product SET name=?, price=?, cost=?, stock_quantity=?, product_description=?, category_id=?, weight=?, shipping_type=? WHERE product_id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssdissdii', $name, $price, $cost, $stock, $product_description, $category_id, $weight, $shipping_type, $product_id);
-        }
-
-    if ($stmt->execute()) {
-        echo "<script>alert('แก้ไขสินค้าสำเร็จ');</script>";
-        echo "<script>window.location.href='manage_products.php';</script>";
-    } else {
-        echo "เกิดข้อผิดพลาด: " . $stmt->error;
+        $stmt->bind_param('ssdissdsi', $name, $price, $cost, $stock, $product_description, $category_id, $weight, $shipping_type, $product_id);
     }
+
+    // Execute SQL
+    if ($stmt->execute()) {
+        echo "<script>alert('อัพเดทสินค้าสำเร็จ'); window.location.href='manage_products.php';</script>";
+    } else {
+        echo "<script>alert('เกิดข้อผิดพลาด: " . addslashes($stmt->error) . "'); window.history.back();</script>";
+    }
+
 }
 
 // การเติมสต็อก
@@ -322,8 +325,8 @@ $result = $conn->query($sql);
 
     <!-- Product Table -->
     <div class="table-responsive">
-        <table class="table table-striped table-bordered text-center">
-            <thead class="table-dark">
+        <table class="table table-bordered">
+            <thead class="thead-light">
                 <tr>
                     <th>สินค้า</th>
                     <th>ราคา</th>
@@ -341,51 +344,63 @@ $result = $conn->query($sql);
             <tbody>
     <?php while ($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?= htmlspecialchars($row['name']) ?></td>
-            <td><?= number_format($row['price'], 2) ?> ฿</td>
-            <td><?= number_format($row['cost'], 2) ?> ฿</td>
-            <td><?= $row['stock_quantity'] ?></td>
-            <td><?= number_format(calculateProfit($row['price'], $row['cost']), 2) ?> ฿</td>
-            <td><?= htmlspecialchars($row['category_name'] ?? 'ไม่มีหมวดหมู่') ?></td>
-            <td><?= number_format($row['weight'], 2) ?> กก.</td>
-            <td>
-                <?php 
-                if (in_array($row['shipping_type'], ['normal', 'chilled', 'frozen'])) {
-                    echo htmlspecialchars($row['shipping_type']);
+            <td class="text-center align-middle"><?= htmlspecialchars($row['name']) ?></td>
+            <td class="text-center align-middle"><?= number_format($row['price'], 2) ?> ฿</td>
+            <td class="text-center align-middle"><?= number_format($row['cost'], 2) ?> ฿</td>
+            <td class="text-center align-middle"><?= $row['stock_quantity'] ?></td>
+            <td class="text-center align-middle"><?= number_format(calculateProfit($row['price'], $row['cost']), 2) ?> ฿</td>
+            <td class="text-center align-middle"><?= htmlspecialchars($row['category_name'] ?? 'ไม่มีหมวดหมู่') ?></td>
+            <td class="text-center align-middle"><?= number_format($row['weight'], 2) ?> กก.</td>
+            <td class="text-center align-middle">
+            <?php 
+                $shipping_types = [
+                    'normal' => 'ปกติ',
+                    'chilled' => 'แช่เย็น',
+                    'frozen' => 'แช่แข็ง'
+                ];
+
+                // ตรวจสอบว่าค่าที่ได้มาตรงกับตัวเลือกที่กำหนดไว้หรือไม่
+                if (array_key_exists($row['shipping_type'], $shipping_types)) {
+                    echo htmlspecialchars($shipping_types[$row['shipping_type']]);
                 } else {
                     echo 'ไม่ระบุ';
                 }
                 ?>
+
             </td>
-            <td>
-                <?php if ($row['image']): ?>
-                    <img src="product/<?= htmlspecialchars($row['image']) ?>" class="product-image" alt="<?= htmlspecialchars($row['name']) ?>">
+            <td class="text-center align-middle">
+                <?php if (!empty($row['image'])): ?>
+                    <button class="btn btn-primary btn-sm view-image-btn" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#imageModal" 
+                        data-image="<?= 'product/' . htmlspecialchars($row['image']) ?>">
+                        ดูรูปภาพ
+                    </button>
                 <?php else: ?>
                     ไม่มีรูปภาพ
                 <?php endif; ?>
             </td>
-            <td>
-                <!-- ปุ่มที่จะแสดง Modal -->
+            <td class="text-center align-middle">
                 <button class="btn btn-info btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#productDetailsModal-<?= $row['product_id'] ?>">
                     ดูรายละเอียด
                 </button>
             </td>
-            <td>
+            <td class="text-center align-middle">
                 <div class="btn-group" role="group">
-                <button class="btn btn-warning btn-sm edit-btn" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#editProductModal"
-                    data-id="<?= $row['product_id'] ?>"
-                    data-name="<?= htmlspecialchars($row['name']) ?>"
-                    data-price="<?= $row['price'] ?>"
-                    data-cost="<?= $row['cost'] ?>"
-                    data-stock="<?= $row['stock_quantity'] ?>"
-                    data-description="<?= htmlspecialchars($row['product_description']) ?>"
-                    data-category="<?= $row['category_id'] ?>"
-                    data-weight="<?= $row['weight'] ?>"
-                    data-shipping="<?= $row['shipping_type'] ?>">
-                    <i class="fas fa-edit"></i>
-                </button>
+                    <button class="btn btn-warning btn-sm edit-btn" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#editProductModal"
+                        data-id="<?= $row['product_id'] ?>"
+                        data-name="<?= htmlspecialchars($row['name']) ?>"
+                        data-price="<?= $row['price'] ?>"
+                        data-cost="<?= $row['cost'] ?>"
+                        data-stock="<?= $row['stock_quantity'] ?>"
+                        data-description="<?= htmlspecialchars($row['product_description']) ?>"
+                        data-category="<?= $row['category_id'] ?>"
+                        data-weight="<?= $row['weight'] ?>"
+                        data-shipping="<?= $row['shipping_type'] ?>">
+                        <i class="fas fa-edit"></i>
+                    </button>
                     <button class="btn btn-info btn-sm restock-btn"
                         data-bs-toggle="modal"
                         data-bs-target="#restockModal"
@@ -398,6 +413,21 @@ $result = $conn->query($sql);
                 </div>
             </td>
         </tr>
+
+        <!-- Image Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imageModalLabel">ดูรูปภาพสินค้า</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="modalImage" src="" class="img-fluid" alt="รูปสินค้า" style="max-width: 100%; height: auto;">
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Modal สำหรับแสดงรายละเอียดสินค้า -->
         <div class="modal fade" id="productDetailsModal-<?= $row['product_id'] ?>" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
@@ -434,18 +464,25 @@ $result = $conn->query($sql);
 <script>
 $(document).ready(function() {
     $('.edit-btn').click(function() {
-        const data = $(this).data();
-        console.log(data.shipping);  // ตรวจสอบค่า shipping_type
-        $('#edit_product_id').val(data.id);
-        $('#edit_product_name').val(data.name);
-        $('#edit_price').val(data.price);
-        $('#edit_cost').val(data.cost);
-        $('#edit_stock').val(data.stock);
-        $('#edit_product_description').val(data.description);
-        $('#edit_category_id').val(data.category);
-        $('#edit_weight').val(data.weight);
-        $('#shipping_type').val(data.shipping); // ตรวจสอบว่า data.shipping ส่งค่าที่ถูกต้องหรือไม่
-    });
+    const data = $(this).data();
+    console.log("ข้อมูลที่ดึงได้:", data); // ตรวจสอบค่าทั้งหมดที่ส่งมา
+
+    $('#edit_product_id').val(data.id);
+    $('#edit_product_name').val(data.name);
+    $('#edit_price').val(data.price);
+    $('#edit_cost').val(data.cost);
+    $('#edit_stock').val(data.stock);
+    $('#edit_product_description').val(data.description);
+    $('#edit_category_id').val(data.category);
+    $('#edit_weight').val(data.weight);
+    
+    // เช็คค่า shipping_type ก่อนกำหนดค่า
+    if (data.shipping) {
+        $('#shipping_type').val(data.shipping);
+    } else {
+        console.warn("shipping_type ไม่มีค่า");
+    }
+});
 
     // Restock button handler
     $('.restock-btn').click(function() {
@@ -458,6 +495,18 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-image-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const imageUrl = this.getAttribute("data-image");
+                document.getElementById("modalImage").src = imageUrl;
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
 <?php $conn->close(); ?>
