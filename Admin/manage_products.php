@@ -209,7 +209,7 @@ $result = $conn->query($sql);
                             <input type="number" class="form-control" id="stock" name="stock" required>
                         </div>
                         <div class="mb-3">
-                            <label for="weight" class="form-label">น้ำหนัก (กก.):</label>
+                            <label for="weight" class="form-label">น้ำหนัก (กก.): ตัวอย่าง 1.00 , 0.50 , 1.25</label>
                             <input type="number" step="0.01" class="form-control" id="weight" name="weight" required>
                         </div>
                         <div class="mb-3">
@@ -275,7 +275,7 @@ $result = $conn->query($sql);
                         <input type="number" class="form-control" id="edit_stock" name="stock" required>
                     </div>
                     <div class="mb-3">
-                        <label for="edit_weight" class="form-label">น้ำหนัก (กก.):</label>
+                        <label for="edit_weight" class="form-label">น้ำหนัก (กก.): ตัวอย่าง 1.00 , 0.50 , 1.25</label>
                         <input type="number" step="0.01" class="form-control" id="edit_weight" name="weight" required>
                     </div>
                     <div class="mb-3">
