@@ -37,6 +37,12 @@ header {
     color: #1b1b1b;
 }
 
+.btn {
+    white-space: nowrap;
+    width: auto; /* ปรับความกว้างของปุ่มให้พอดีกับข้อความ */
+    text-align: center; /* จัดปุ่มไปทางขวา */
+    margin-right: 10px; /* เพิ่มระยะห่างด้านขวา 10px */
+}
 .btn-primary {
     background-color: #2dd30c;
     border: none;

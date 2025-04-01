@@ -7,9 +7,13 @@ include 'topnavbar.php';
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <title>โครงการเทคโนโลยีเพื่อชุมชน</title>
+    <title>เกี่ยวกับโครงการ</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Favicon and Icons -->
+
+    <link rel="icon" type="image/x-icon" href="/images/favi/favicon.ico">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -39,19 +43,17 @@ include 'topnavbar.php';
             margin-bottom: 60px;
         }
 
-        /* Hero Banner Styling */
         .hero-banner {
             position: relative;
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
             color: var(--text-light);
-            padding: 6rem 0; /* เพิ่ม padding เพื่อความโปร่ง */
+            padding: 6rem 0;
             text-align: center;
             overflow: hidden;
             margin-bottom: 3rem;
-            animation: gradientShift 10s ease infinite; /* Animation พื้นหลัง */
+            animation: gradientShift 10s ease infinite;
         }
 
-        /* Gradient Animation */
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -65,33 +67,32 @@ include 'topnavbar.php';
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.2); /* Overlay เพื่อให้ข้อความเด่น */
+            background: rgba(0, 0, 0, 0.2);
             z-index: 1;
         }
 
         .hero-banner .container {
             position: relative;
-            z-index: 2; /* ให้ข้อความอยู่เหนือ overlay */
+            z-index: 2;
         }
 
         .hero-title {
             font-family: 'Prompt', sans-serif;
-            font-size: 3rem; /* ขยายขนาดตัวอักษร */
+            font-size: 3rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5); /* เงาเข้มขึ้น */
-            animation: fadeInDown 1s ease-out; /* Animation ข้อความ */
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 1s ease-out;
         }
 
         .hero-subtitle {
-            font-size: 1.5rem; /* ขยายขนาดเล็กน้อย */
+            font-size: 1.5rem;
             margin-bottom: 2rem;
             opacity: 0.9;
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
-            animation: fadeInUp 1.2s ease-out; /* Animation ข้อความ */
+            animation: fadeInUp 1.2s ease-out;
         }
 
-        /* Fade In Animations */
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -114,7 +115,6 @@ include 'topnavbar.php';
             }
         }
 
-        /* Icon Decoration */
         .hero-icon {
             font-size: 3rem;
             color: var(--primary-light);
@@ -128,7 +128,6 @@ include 'topnavbar.php';
             60% { transform: translateY(-5px); }
         }
 
-        /* Section Styling */
         .project-section {
             background-color: white;
             border-radius: 10px;
@@ -167,23 +166,25 @@ include 'topnavbar.php';
             margin: 0;
         }
 
-        /* Swiper Gallery */
-        .swiper {
+        .swiper, .video-container {
             width: 100%;
-            min-height: 250px;
-            margin-bottom: 1.5rem;
+            height: 300px;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
         }
 
         .swiper-slide img {
             width: 100%;
-            height: 250px;
+            height: 100%;
             object-fit: cover;
             border-radius: 8px;
-            transition: transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .swiper-slide img:hover {
             transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
 
         .swiper-button-next,
@@ -195,7 +196,21 @@ include 'topnavbar.php';
             background-color: var(--primary-color);
         }
 
-        /* Info Cards */
+        .video-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+            border-radius: 8px;
+        }
+
         .info-card {
             background-color: white;
             border-radius: 8px;
@@ -235,33 +250,11 @@ include 'topnavbar.php';
             color: var(--primary-dark);
         }
 
-        /* Video Container */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
-        }
-
-        .video-container iframe,
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Footer Spacing */
         main {
             min-height: calc(100vh - 200px);
             padding-bottom: 60px;
         }
 
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .hero-banner {
                 padding: 3rem 0;
@@ -288,13 +281,10 @@ include 'topnavbar.php';
                 margin-right: 0;
                 margin-bottom: 1rem;
             }
-            
-            .swiper-slide img {
-                height: 200px;
-            }
 
-            .project-section {
-                margin-bottom: 2rem;
+            .swiper, .video-container {
+                height: 200px;
+                aspect-ratio: 16 / 9;
             }
         }
     </style>
@@ -304,7 +294,7 @@ include 'topnavbar.php';
     <!-- Hero Banner -->
     <section class="hero-banner">
         <div class="container">
-            <i class="fas fa-leaf hero-icon"></i> <!-- ไอคอนใบไม้เคลื่อนไหว -->
+            <i class="fas fa-leaf hero-icon"></i>
             <h1 class="hero-title">โครงการเทคโนโลยีเพื่อชุมชน</h1>
             <p class="hero-subtitle">นวัตกรรมเพื่อยกระดับคุณภาพชีวิตและเพิ่มรายได้ให้ชุมชนอย่างยั่งยืน</p>
         </div>
@@ -409,9 +399,16 @@ include 'topnavbar.php';
                 <div class="col-lg-6">
                     <div class="swiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide"><img src="images/rice_before1.jpg" alt="ภาพการสีข้าว 1" class="img-fluid"></div>
-                            <div class="swiper-slide"><img src="images/rice_after1.jpg" alt="ภาพการสีข้าว 2" class="img-fluid"></div>
-                            <div class="swiper-slide"><img src="images/rice_after2.jpg" alt="ภาพการสีข้าว 3" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r1.jpg" alt="ภาพการสีข้าว 1" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r2.jpg" alt="ภาพการสีข้าว 2" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r3.jpg" alt="ภาพการสีข้าว 3" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r4.jpg" alt="ภาพการสีข้าว 4" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r5.jpg" alt="ภาพการสีข้าว 5" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r6.jpg" alt="ภาพการสีข้าว 6" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r7.jpg" alt="ภาพการสีข้าว 7" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r8.jpg" alt="ภาพการสีข้าว 8" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r9.jpg" alt="ภาพการสีข้าว 9" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/r10.jpg" alt="ภาพการสีข้าว 10" class="img-fluid"></div>
                         </div>
                         <!-- Pagination -->
                         <div class="swiper-pagination"></div>
@@ -423,7 +420,7 @@ include 'topnavbar.php';
                 <div class="col-lg-6">
                     <div class="video-container">
                         <video controls>
-                            <source src="videos/rice_after.mp4" type="video/mp4">
+                            <source src="images/compo/vdoRic.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
@@ -474,9 +471,11 @@ include 'topnavbar.php';
                 <div class="col-lg-6">
                     <div class="swiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide"><img src="images/mushroom_before1.jpg" alt="ภาพโรงเรือนเพาะเห็ด 1" class="img-fluid"></div>
-                            <div class="swiper-slide"><img src="images/mushroom_after1.jpg" alt="ภาพโรงเรือนเพาะเห็ด 2" class="img-fluid"></div>
-                            <div class="swiper-slide"><img src="images/mushroom_after2.jpg" alt="ภาพโรงเรือนเพาะเห็ด 3" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/m1.jpg" alt="ภาพโรงเรือนเพาะเห็ด 1" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/m2.jpg" alt="ภาพโรงเรือนเพาะเห็ด 2" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/m3.jpg" alt="ภาพโรงเรือนเพาะเห็ด 3" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/m4.jpg" alt="ภาพโรงเรือนเพาะเห็ด 4" class="img-fluid"></div>
+                            <div class="swiper-slide"><img src="images/compo/m5.jpg" alt="ภาพโรงเรือนเพาะเห็ด 5" class="img-fluid"></div>
                         </div>
                         <!-- Pagination -->
                         <div class="swiper-pagination"></div>
@@ -488,7 +487,7 @@ include 'topnavbar.php';
                 <div class="col-lg-6">
                     <div class="video-container">
                         <video controls>
-                            <source src="videos/mushroom_after.mp4" type="video/mp4">
+                            <source src="images/compo/VdoMush.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
