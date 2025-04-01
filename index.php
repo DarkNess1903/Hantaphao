@@ -27,518 +27,583 @@ include 'topnavbar.php';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+        
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary-color: #f5f5f5;
+            --accent-color: #ffab00;
+            --text-dark: #333333;
+            --text-light: #f5f5f5;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            background-color: #f9f9f9;
+            color: var(--text-dark);
+            line-height: 1.7;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width-section {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container-fluid {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Kanit', sans-serif;
+            font-weight: 600;
+            margin-top: 0;
+        }
+
+        /* Modern Hero Banner - Full Screen */
+        .hero-banner {
+            width: 100%;
+            height: 100vh;
+            min-height: 600px;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                        url('images/Banner_home.jpg') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+            padding: 2rem;
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        /* Full Width Content Sections */
+        .content-section {
+            width: 100%;
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .content-section:nth-child(even) {
+            background-color: white;
+        }
+
+        .content-section:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Modern Card Layout - Full Width */
+        .history-section {
+            display: flex;
+            width: 100%;
+            min-height: 500px;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .history-image {
+            flex: 1;
+            min-height: 500px;
+            background: url('images/example.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .history-image:hover {
+            flex: 1.2;
+        }
+
+        .history-content {
+            flex: 1;
+            padding: 4rem;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .history-content h1 {
+            color: var(--primary-color);
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .history-content h1 img {
+            margin-left: 1rem;
+            width: 60px;
+            height: 60px;
+            transition: transform 0.5s ease;
+        }
+
+        .history-content h1:hover img {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .history-content h2 {
+            color: var(--primary-dark);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .history-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-light);
+        }
+
+        .highlight {
+            color: var(--primary-light);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: currentColor;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .highlight:hover::after {
+            transform: scaleX(1);
+        }
+
+        /* Objectives Section - Full Width */
+        .objectives-section {
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+
+        .section-title {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h1 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            display: inline-block;
+        }
+
+        .section-title h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .objectives-content {
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        /* Full Width Product Slideshow */
+        .product-section {
+            width: 100%;
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+        }
+
+        .product-header {
+            display: flex; /* ใช้ flex เพื่อจัดเรียง element ด้านใน */
+            align-items: center; /* จัดแนวตั้งให้อยู่ตรงกลาง */
+            justify-content: flex-start; /* ชิดซ้ายเสมอ */
+            margin-bottom: 3rem;
+            padding-left: 2rem; /* ชิดขอบซ้าย */
+            gap: 1rem; /* เพิ่มช่องว่างระหว่างข้อความและไอคอน */
+        }
+
+        .product-header h1 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin: 0; /* ลบ margin เดิมเพื่อป้องกันการย้ายตำแหน่ง */
+        }
+
+        .product-link {
+            display: flex; /* ใช้ flex เพื่อจัดไอคอนให้อยู่ในตำแหน่งที่เหมาะสม */
+            align-items: center; /* จัดแนวตั้งให้อยู่ตรงกลาง */
+            transition: var(--transition);
+            text-decoration: none; /* ลบเส้นใต้ของลิงก์ */
+        }
+
+        .product-link img {
+            width: 70px; /* ขนาดไอคอนปกติ */
+            height: 70px; /* ขนาดไอคอนปกติ */
+            margin-left: 0; /* ลบ margin เดิม */
+            transition: var(--transition);
+        }
+
+        .product-link:hover {
+            transform: translateY(-3px);
+        }
+
+        .product-link:hover img {
+            transform: rotate(-15deg) scale(1.1);
+        }
+
+        .slideshow-container {
+            width: 100%;
+            height: 70vh;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mySlides {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .mySlides img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition);
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .slide-nav:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev {
+            left: 2rem;
+        }
+
+        .next {
+            right: 2rem;
+        }
+
+        .slide-dots {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) translateX(-50%);
+            }
+            40% {
+                transform: translateY(-20px) translateX(-50%);
+            }
+            60% {
+                transform: translateY(-10px) translateX(-50%);
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1200px) {
+            .hero-content h1 {
+                font-size: 3.5rem;
+            }
+            
+            .history-content {
+                padding: 3rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .history-section {
+                flex-direction: column;
+            }
+            
+            .history-image {
+                min-height: 300px;
+                flex: unset;
+            }
+            
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            
+            .section-title h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-banner {
+                height: 80vh;
+                min-height: 500px;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+            
+            .history-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .history-content {
+                padding: 2rem;
+            }
+            
+            .slideshow-container {
+                height: 50vh;
+            }
+
+            .product-header {
+                padding-left: 1rem; /* ลด padding ใน mobile */
+                gap: 0.5rem; /* ลดช่องว่างใน mobile */
+            }
+
+            .product-header h1 {
+                font-size: 3rem; /* เพิ่มขนาดข้อความใน mobile ให้ใหญ่ขึ้นมาก */
+            }
+
+            .product-link img {
+                width: 80px; /* เพิ่มขนาดไอคอนใน mobile ให้ใหญ่ขึ้นมาก */
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title h1 {
+                font-size: 2rem;
+            }
+            
+            .product-header h1 {
+                font-size: 2.5rem; /* เพิ่มขนาดข้อความใน mobile เล็กให้ใหญ่ขึ้น */
+            }
+            
+            .product-link img {
+                width: 70px; /* เพิ่มขนาดไอคอนใน mobile เล็กให้ใหญ่ขึ้น */
+                height: 70px;
+            }
+            
+            .slide-nav {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
-<style>
-/* General Styling */
-body {
-    font-family: 'IBM Plex Sans Thai', sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-}
-
-/* Header and Banner */
-header .banner {
-    width: 100%;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-}
-
-header .banner img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    max-height: 300px;
-    display: block;
-    margin: 0;
-}
-
-/* Container Styling */
-.container {
-    padding: 0;
-    max-width: 100%;
-    margin: 0;
-    box-sizing: border-box;
-    width: 100%;
-}
-
-/* Two-Column Section */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    margin-bottom: 40px;
-    margin-top: 0;
-    width: 100%;
-    box-sizing: border-box;
-    margin-left: 0;
-    margin-right: 0;
-}
-
-.col-md-3 {
-    flex: 0 0 40%;
-    max-width: 40%;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    margin: 0;
-    min-height: 425px;
-}
-
-.col-md-9 {
-    flex: 0 0 60%;
-    max-width: 60%;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    margin: 0;
-    min-height: 425px;
-}
-
-.PR_pic, .right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border-radius: 0;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    margin: 0;
-}
-
-.PR_pic {
-    background-color: #e0e0e0;
-    text-align: center;
-    padding: 0;
-    justify-content: center;
-}
-
-.PR_pic img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0;
-}
-
-.right {
-    padding: 15px;
-    background-color: #3b5929;
-    color: white;
-    justify-content: flex-start;
-    padding-top: 20px;
-    box-sizing: border-box;
-}
-
-.right h1 {
-    font-family: 'Kanit', sans-serif;
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    color: #3abe1f;
-    flex-wrap: wrap;
-    line-height: 1;
-    letter-spacing: 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.right h1 img {
-    margin-left: 8px;
-    width: 50px;
-    height: 50px;
-}
-
-.right h2 {
-    font-family: 'Kanit', sans-serif;
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    margin-top: -15px;
-    line-height: 1.1;
-    letter-spacing: 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Styling for Paragraphs */
-.right .history-section {
-    font-size: 1.1rem;
-    color: #fff;
-    font-weight: 500;
-    line-height: 1.5;
-    text-align: justify;
-    margin-bottom: 15px;
-    letter-spacing: 0;
-    word-break: break-word;
-}
-
-/* Indent only the first paragraph */
-.right .history-section:first-of-type {
-    text-indent: 1.5em;
-}
-
-.right .highlight {
-    font-style: italic;
-    color: #f0f0f0;
-}
-
-.right .motto {
-    display: block;
-    font-style: italic;
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 6px 10px;
-    margin-top: 10px;
-    border-left: 4px solid #ffffff;
-    letter-spacing: 0;
-    text-indent: 0;
-    line-height: 1.4;
-    word-break: break-word;
-}
-
-/* Objective Section */
-.objective {
-    background-color: #fff;
-    padding: 20px 15px;
-    border-radius: 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 40px 0;
-    width: 100%;
-}
-
-/* Product Section */
-.product {
-    text-align: left;
-    width: 100%;
-    margin-bottom: 40px;
-    padding: 0 15px;
-}
-
-.product h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.product h1 a {
-    margin-left: 10px;
-    text-decoration: none;
-    transition: transform 0.3s ease;
-}
-
-.product h1 a:hover {
-    transform: scale(1.1);
-}
-
-/* Slideshow Styling */
-.slideshow-container {
-    width: 100%;
-    position: relative;
-    margin: 0;
-    overflow: hidden;
-    height: 400px; /* กำหนดความสูงให้ container */
-}
-
-.mySlides {
-    width: 100%;
-    height: 400px;
-    opacity: 0; /* เริ่มต้นโปร่งใส */
-    position: absolute; /* วางสไลด์ทับกัน */
-    top: 0;
-    left: 0;
-    transition: opacity 2s ease-in-out; /* ใช้ transition แทน animation */
-}
-
-.mySlides img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: block;
-}
-
-.prev, .next {
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    width: auto;
-    padding: 16px;
-    margin-top: -22px;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    transition: 0.6s ease;
-    border-radius: 0 3px 3px 0;
-    user-select: none;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.next {
-    right: 0;
-    border-radius: 3px 0 0 3px;
-}
-
-.prev:hover, .next:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-.dot {
-    cursor: pointer;
-    height: 15px;
-    width: 15px;
-    margin: 0 2px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.6s ease;
-}
-
-.active, .dot:hover {
-    background-color: #27ae60;
-}
-
-/* ลบ .fade ออก เพราะใช้ transition แทน */
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .col-md-3, .col-md-9 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-
-    .right {
-        padding: 12px;
-        padding-top: 15px;
-    }
-
-    .right h1 {
-        font-size: 2.2rem;
-        letter-spacing: 0;
-        margin-bottom: 12px;
-        line-height: 1.1;
-    }
-
-    .right h1 img {
-        width: 40px;
-        height: 40px;
-        margin-left: 6px;
-    }
-
-    .right h2 {
-        font-size: 1.6rem;
-        letter-spacing: 0;
-        margin-bottom: 15px;
-        margin-top: -12px;
-        line-height: 1.2;
-    }
-
-    .right .history-section {
-        font-size: 1rem;
-        font-weight: 500;
-        line-height: 1.4;
-        margin-bottom: 12px;
-        letter-spacing: 0;
-        text-align: justify;
-        word-break: break-word;
-    }
-
-    .right .history-section:first-of-type {
-        text-indent: 1em;
-    }
-
-    .right .motto {
-        padding: 5px 8px;
-        margin-top: 8px;
-        border-left: 3px solid #ffffff;
-        letter-spacing: 0;
-        line-height: 1.3;
-        word-break: break-word;
-    }
-
-    .prev, .next {
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .objective {
-        padding: 15px 12px;
-    }
-
-    .product {
-        padding: 0 12px;
-    }
-
-    .product h1 {
-        font-size: 1.8rem;
-    }
-
-    .slideshow-container {
-        width: 100%;
-        margin: 0;
-        height: 300px; /* ปรับความสูงให้สอดคล้อง */
-    }
-
-    .mySlides {
-        height: 300px;
-    }
-}
-
-@media (max-width: 576px) {
-    .container {
-        padding: 0;
-    }
-
-    .right {
-        padding: 10px;
-        padding-top: 12px;
-    }
-
-    .right h1 {
-        font-size: 1.6rem;
-        letter-spacing: 0;
-        margin-bottom: 10px;
-        line-height: 1.1;
-    }
-
-    .right h1 img {
-        width: 30px;
-        height: 30px;
-        margin-left: 5px;
-    }
-
-    .right h2 {
-        font-size: 1.3rem;
-        letter-spacing: 0;
-        margin-bottom: 12px;
-        margin-top: -8px;
-        line-height: 1.2;
-    }
-
-    .right .history-section {
-        font-size: 0.9rem;
-        font-weight: 400;
-        line-height: 1.3;
-        margin-bottom: 10px;
-        letter-spacing: 0;
-        text-align: left;
-        word-break: break-word;
-    }
-
-    .right .history-section:first-of-type {
-        text-indent: 0;
-    }
-
-    .right .motto {
-        padding: 4px 6px;
-        margin-top: 6px;
-        border-left: 2px solid #ffffff;
-        letter-spacing: 0;
-        line-height: 1.2;
-        word-break: break-word;
-    }
-
-    .objective {
-        padding: 12px 10px;
-    }
-
-    .product {
-        padding: 0 10px;
-    }
-
-    .product h1 {
-        font-size: 1.6rem;
-    }
-
-    .slideshow-container {
-        width: 100%;
-        margin: 0;
-        height: 200px; /* ปรับความสูงให้สอดคล้อง */
-    }
-
-    .mySlides {
-        height: 200px;
-    }
-}
-</style>
 <body>
-    <header>
-        <div class="banner">
-            <img src="images/Banner_home.jpg" alt="Banner" class="img-fluid">
+    <!-- Full Screen Hero Banner -->
+    <section class="full-width-section hero-banner">
+        <div class="hero-content">
+            <h1>ชุมชนหันตะเภา</h1>
+            <p>แหล่งเกษตรกรรมอุดมสมบูรณ์ และวัฒนธรรมท้องถิ่นอันงดงาม</p>
         </div>
-    </header>
+        <div class="scroll-down" onclick="document.querySelector('.history-section').scrollIntoView({ behavior: 'smooth' })">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 col-sm-12 PR_pic">
-                <img src="images/example.jpg" alt="Example Picture" class="img-fluid">
-            </div>
-            <div class="col-md-9 col-sm-12 right">
-                <h1>Hantaphao <img src="images/leaf.png" alt="Leaf Icon" class="img-fluid" width="50px" height="50px"></h1>
+    <!-- Full Width History Section -->
+    <section class="full-width-section content-section">
+        <div class="history-section">
+            <div class="history-image"></div>
+            <div class="history-content">
+                <h1>Hantaphao <img src="images/leaf.png" alt="Leaf Icon"></h1>
                 <h2>History</h2>
-                <p class="history-section" style="margin-top:15px">
-                    ตำบลหันตะเภาเป็นชุมชนเกษตรกรรมอุดมสมบูรณ์ไปด้วยป่าไม้ มีลำคลองไหลผ่านในอดีตชาวบ้านใช้คลองในการสัญจร<BR>ไปมาโดยใช้เรือเป็นพาหนะ ต่อมามีคนจีนอพยพมาอยู่ ประกอบอาชีพค้าขาย เป็นทั้งแหล่งรวบรวมสินค้านานาภัณฑ์ และเป็นจุดกลับลำเรือสำเภา จึงเรียกขานที่นี่ว่า <span class="highlight">“หันสำเภา”</span> และเรียกเพี้ยนมาเป็น <span class="highlight">“หันตะเภา”</span> ต่อมาคนจีนได้อพยพออกจากพื้นที่ไปอยู่ที่อื่นๆ พื้นที่บ้านลำแดงมีป่าลดน้อยลง ทำให้ชาวบ้านยึดอาชีพทำการเกษตรจนถึงปัจจุบัน ตำบลหันตะเภา อำเภอวังน้อย จังหวัดพระนครศรีอยุธยา มีคำขวัญประจำตำบลว่า <span class="motto">“ตำบลน่าอยู่ชุมชนเข้มแข็ง พัฒนาคุณภาพชีวิตส่งเสริมเศรษฐกิจ มุ่งสู่ชีวิตพอเพียง <BR>และมีการบริหารจัดการที่ดีระดับแนวหน้า”</span>
+                <p>
+                    ตำบลหันตะเภาเป็นชุมชนเกษตรกรรมอุดมสมบูรณ์ไปด้วยป่าไม้ มีลำคลองไหลผ่านในอดีตชาวบ้านใช้คลองในการสัญจรไปมาโดยใช้เรือเป็นพาหนะ ต่อมามีคนจีนอพยพมาอยู่ ประกอบอาชีพค้าขาย เป็นทั้งแหล่งรวบรวมสินค้านานาภัณฑ์ และเป็นจุดกลับลำเรือสำเภา จึงเรียกขานที่นี่ว่า <span class="highlight">"หันสำเภา"</span> และเรียกเพี้ยนมาเป็น <span class="highlight">"หันตะเภา"</span> ต่อมาคนจีนได้อพยพออกจากพื้นที่ไปอยู่ที่อื่นๆ พื้นที่บ้านลำแดงมีป่าลดน้อยลง ทำให้ชาวบ้านยึดอาชีพทำการเกษตรจนถึงปัจจุบัน ตำบลหันตะเภา อำเภอวังน้อย จังหวัดพระนครศรีอยุธยา มีคำขวัญประจำตำบลว่า <span class="highlight">"ตำบลน่าอยู่ชุมชนเข้มแข็ง พัฒนาคุณภาพชีวิตส่งเสริมเศรษฐกิจ มุ่งสู่ชีวิตพอเพียง และมีการบริหารจัดการที่ดีระดับแนวหน้า"</span>
                 </p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="objective container my-4">
-        <h1 style="color:#3abe1f;font-weight: bold;font-size:3rem;">วัตถุประสงค์</h1>
-        <p style="font-size:1.2rem;">
-            โครงการนี้มุ่งเน้นการพัฒนาชุมชนหันตะเภาในอำเภอวังน้อย จังหวัดพระนครศรีอยุธยา โดยมีวัตถุประสงค์หลักในการศึกษาพัฒนาระบบควบคุมอัตโนมัติในโรงเรือนเห็ดและสร้างโรงเรือนเห็ดอัจฉริยะเพื่อเพิ่มผลผลิตอย่างมีประสิทธิภาพ, ออกแบบและสร้างเตาเผาชีวมวลไร้ควันเพื่อการผลิตถ่านและน้ำส้มควันไม้เชิงพาณิชย์ที่เป็นมิตรกับสิ่งแวดล้อม, พัฒนาเครื่องสีข้าวอินทรีย์ดัชนีน้ำตาลต่ำเพื่อเพิ่มประสิทธิภาพการผลิตและยกระดับคุณภาพผลิตภัณฑ์ของชุมชน, รวมทั้งศึกษาการนำเทคโนโลยีแพลตฟอร์มดิจิตอลมาใช้เพื่อเพิ่มมูลค่าผลิตภัณฑ์ของภูมิปัญญาท้องถิ่นและพัฒนาแพลตฟอร์มดิจิตอลสำหรับธุรกิจผลิตภัณฑ์ชุมชนอย่างยั่งยืน
-        </p>
-    </div>
+    <!-- Full Width Objectives Section -->
+    <section class="full-width-section content-section">
+        <div class="section-container objectives-section">
+            <div class="section-title">
+                <h1>วัตถุประสงค์</h1>
+            </div>
+            <div class="objectives-content">
+                <p>
+                    โครงการนี้มุ่งเน้นการพัฒนาชุมชนหันตะเภาในอำเภอวังน้อย จังหวัดพระนครศรีอยุธยา โดยมีวัตถุประสงค์หลักในการศึกษาพัฒนาระบบควบคุมอัตโนมัติในโรงเรือนเห็ดและสร้างโรงเรือนเห็ดอัจฉริยะเพื่อเพิ่มผลผลิตอย่างมีประสิทธิภาพ, ออกแบบและสร้างเตาเผาชีวมวลไร้ควันเพื่อการผลิตถ่านและน้ำส้มควันไม้เชิงพาณิชย์ที่เป็นมิตรกับสิ่งแวดล้อม, พัฒนาเครื่องสีข้าวอินทรีย์ดัชนีน้ำตาลต่ำเพื่อเพิ่มประสิทธิภาพการผลิตและยกระดับคุณภาพผลิตภัณฑ์ของชุมชน, รวมทั้งศึกษาการนำเทคโนโลยีแพลตฟอร์มดิจิตอลมาใช้เพื่อเพิ่มมูลค่าผลิตภัณฑ์ของภูมิปัญญาท้องถิ่นและพัฒนาแพลตฟอร์มดิจิตอลสำหรับธุรกิจผลิตภัณฑ์ชุมชนอย่างยั่งยืน
+                </p>
+            </div>
+        </div>
+    </section>
 
-    <div class="product container my-4">
-        <h1>
-            ผลิตภัณฑ์ 
-            <a href="product.php">
-                <img src="images/cart2.png" alt="Cart Icon" class="img-fluid" width="75px" height="75px">
-            </a>
-        </h1>
-        <div class="slideshow-container">
-            <div class="mySlides">
-                <img src="images/Element/Product_1.jpg" class="img-fluid" alt="Product 1">
+    <!-- Full Width Product Section -->
+    <section class="full-width-section product-section">
+        <div class="section-container">
+            <div class="product-header">
+                <h1>ผลิตภัณฑ์</h1>
+                <a href="product.php" class="product-link">
+                    <img src="images/cart2.png" alt="Cart Icon">
+                </a>
             </div>
-            <div class="mySlides">
-                <img src="images/Element/Product_2.jpg" class="img-fluid" alt="Product 2">
+            
+            <div class="slideshow-container">
+                <div class="mySlides">
+                    <img src="images/Element/Product_1.jpg" alt="Product 1">
+                </div>
+                <div class="mySlides">
+                    <img src="images/Element/Product_2.jpg" alt="Product 2">
+                </div>
+                <div class="mySlides">
+                    <img src="images/Element/product_3.jpg" alt="Product 3">
+                </div>
+                
+                <div class="slide-nav prev" onclick="plusSlides(-1)">❮</div>
+                <div class="slide-nav next" onclick="plusSlides(1)">❯</div>
+                
+                <div class="slide-dots">
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
             </div>
-            <div class="mySlides">
-                <img src="images/Element/product_3.jpg" class="img-fluid" alt="Product 3">
-            </div>
-            <a class="prev" onclick="plusSlides(-1)">❮</a>
-            <a class="next" onclick="plusSlides(1)">❯</a>
         </div>
-        <br>
-        <div style="text-align:center">
-            <span class="dot" onclick="currentSlide(1)"></span>
-            <span class="dot" onclick="currentSlide(2)"></span>
-            <span class="dot" onclick="currentSlide(3)"></span>
-        </div>
-    </div>
-    <?php
-    include 'footer.php';
-    ?>
+    </section>
+
+    <?php include 'footer.php'; ?>
 
     <script>
         let slideIndex = 1;
         showSlides(slideIndex);
 
-        // เปลี่ยนสไลด์อัตโนมัติทุก 10 วินาที
+        // Auto slide change every 8 seconds
         setInterval(() => {
             plusSlides(1);
-        }, 10000);
+        }, 8000);
 
         function plusSlides(n) {
             showSlides(slideIndex += n);
@@ -556,20 +621,30 @@ header .banner img {
             if (n > slides.length) { slideIndex = 1; }
             if (n < 1) { slideIndex = slides.length; }
 
-            // รีเซ็ต opacity ของทุกสไลด์
+            // Hide all slides
             for (i = 0; i < slides.length; i++) {
                 slides[i].style.opacity = "0";
             }
 
-            // อัปเดต dots
+            // Update dots
             for (i = 0; i < dots.length; i++) {
                 dots[i].className = dots[i].className.replace(" active", "");
             }
 
-            // แสดงสไลด์ปัจจุบัน
+            // Show current slide
             slides[slideIndex - 1].style.opacity = "1";
             dots[slideIndex - 1].className += " active";
         }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
     </script>
 </body>
 </html>

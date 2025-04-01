@@ -274,7 +274,7 @@ include 'topnavbar.php';
             <div class="col-12">
                 <section class="card shadow-sm border-0 animate__animated animate__fadeInUp">
                     <div class="card-body p-4">
-                        <h3 class="card-title text-success mb-3">สินค้า OTOP</h3>
+                        <h3 class="card-title text-success mb-3">วิสาหกิจชุมชน</h3>
                         <div id="otopCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
